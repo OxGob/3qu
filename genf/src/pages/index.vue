@@ -1,5 +1,10 @@
 <template>
   <q-page>
+    <q-tabs color="secondary" glossy align="justify">
+        <q-tab slot="title" default name="QDes" icon="subject" label="QDesign"/>
+        <q-tab slot="title" name="QDesPos" icon="subject" label="QDesignPost"/>
+      <!-- QDes Tab -->
+        <q-tab-pane name="QDes">
           <q-card class="bg-cyan-2 q-ma-xl">
             <q-card-main>
             <div v-for="form in forms" :key="form.id">
@@ -24,6 +29,11 @@
            </div>
             </q-card-main>
           </q-card>
+        </q-tab-pane>
+          <!-- QDesPos Tab -->
+        <q-tab-pane name="QDesPos">
+        </q-tab-pane>
+      </q-tabs>
   </q-page>
 </template>
 
