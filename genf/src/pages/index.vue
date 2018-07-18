@@ -13,7 +13,7 @@
             <q-card-main>
             <div v-for="(form, fIndex) in forms" :key="form.id">
               <q-field class="q-mb-sm" label="Form Title: " helper="Please enter the title of the form.">
-                <q-input v-model="form.qname" type="text" clearable />
+                <q-input v-model="form.fname" type="text" clearable />
               </q-field>
               <q-card-separator class="q-mb-md q-mt-xl"/>
            <div v-for="(question, qIndex) in form.questions" :key="question.id">
