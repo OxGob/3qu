@@ -34,7 +34,7 @@
            </div>
            </div>
             </q-card-main>
-          <q-btn class="q-ml-md q-mb-md" align="center" color="red" icon-right="navigate_next" @click="generateForm">Generate the form</q-btn>
+          <q-btn class="q-ml-md q-mb-md" color="red" icon-right="navigate_next" @click="generateForm">Generate the form</q-btn>
           </q-card>
         </q-tab-pane>
           <!-- QDesPos Tab -->
