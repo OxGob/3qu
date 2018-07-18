@@ -1,6 +1,6 @@
 <template>
   <q-page>
-    <q-tabs color="secondary" glossy align="justify">
+    <q-tabs color="secondary" glossy align="justify" v-model="selectedTab">
         <q-tab slot="title" default name="QDes" icon="subject" label="QDesign"/>
         <q-tab slot="title" name="QDesPos" icon="subject" label="QDesignPost"/>
       <!-- QDes Tab -->
@@ -34,6 +34,7 @@
            </div>
            </div>
             </q-card-main>
+          <q-btn class="q-ml-md q-mb-md" align="center" color="red" icon-right="navigate_next" @click="generateForm">Generate the form</q-btn>
           </q-card>
         </q-tab-pane>
           <!-- QDesPos Tab -->
@@ -48,6 +49,7 @@
 export default {
   data () {
     return {
+      selectedTab: 'QDes',
       forms: [
         {
           fname: '',
@@ -86,6 +88,9 @@ export default {
     },
     remRowAns (fIndex, qIndex) {
       this.forms[fIndex].questions[qIndex].answerChoices.splice(qIndex, 1)
+    },
+    generateForm () {
+      this.selectedTab = 'QDesPos'
     }
   }
 }
