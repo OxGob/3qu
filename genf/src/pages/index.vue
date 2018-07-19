@@ -108,8 +108,25 @@ export default {
     },
     posTest () {
       // var numOfObj = Object.keys(this.forms[0].questions[0].answerChoices).length
-      var numOfObj = Object.values(this.forms[0].questions[0].answerChoices[1])
-      this.$q.notify('Num: ' + numOfObj)
+      var lenForm = Object.keys(this.forms).length
+      var lenQ = Object.keys(this.forms[lenForm - 1].questions).length
+      var iForm = ''
+      var jForm = ''
+      // var aForm = ''
+      for (iForm = 0; iForm < lenForm; iForm++) {
+        this.$q.notify('Length of Form: ' + lenForm)
+        for (jForm = 0; jForm < lenQ; jForm++) {
+          this.$q.notify('Length of Qu: ' + lenQ)
+        // var lenA = Object.keys(this.forms[iForm].questions[jForm].answerChoices).length
+        // this.$q.notify('Length of An: ' + lenA)
+        }
+      }
+      // var lenQ = Object.keys(this.forms[lenForm - 1].questions).length
+      // this.$q.notify('Length of Qu: ' + lenQ)
+      // var lenA = Object.keys(this.forms[lenForm - 1].questions[lenQ - 1].answerChoices).length
+      // this.$q.notify('Length of An: ' + lenA)
+      // var numOfObj = Object.values(this.forms[lenForm - 1].questions)
+      // this.$q.notify('Num ans: ' + numOfObj)
     }
   }
 }
