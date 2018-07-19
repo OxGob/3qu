@@ -107,7 +107,9 @@ export default {
       this.posTest()
     },
     posTest () {
-      // this.$q.notify('ok')
+      // var numOfObj = Object.keys(this.forms[0].questions[0].answerChoices).length
+      var numOfObj = Object.values(this.forms[0].questions[0].answerChoices[1])
+      this.$q.notify('Num: ' + numOfObj)
     }
   }
 }
