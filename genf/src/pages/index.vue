@@ -39,6 +39,19 @@
         </q-tab-pane>
           <!-- QDesPos Tab -->
         <q-tab-pane name="QDesPos">
+            <q-card class="bg-blue-2 q-ma-xl">
+            <q-card-title>Resulting form
+              <span slot="subtitle">View the designed form.</span>
+            </q-card-title>
+            <q-card-separator class="q-mb-md q-mt-xl"/>
+            <q-card-main>
+            <div v-for="(form) in forms" :key="form.id">
+              <q-field class="q-mb-sm" label="Question Title: " >
+                <q-input v-model="form.fname" />
+              </q-field>
+            </div>
+            </q-card-main>
+            </q-card>
         </q-tab-pane>
       </q-tabs>
   </q-page>
@@ -91,6 +104,10 @@ export default {
     },
     generateForm () {
       this.selectedTab = 'QDesPos'
+      this.posTest()
+    },
+    posTest () {
+      // this.$q.notify('ok')
     }
   }
 }
