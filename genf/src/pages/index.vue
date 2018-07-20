@@ -73,9 +73,11 @@ export default {
           questions: [
             {
               qtext: '',
+              qId: '',
               answerChoices: [
                 {
-                  answerId: ''
+                  answerId: '',
+                  nextQuId: ''
                 }
               ]
             }
@@ -88,9 +90,11 @@ export default {
     addRowQuestions (fIndex) {
       this.forms[fIndex].questions.push({
         qtext: '',
+        qId: '',
         answerChoices: [
           {
-            answerId: ''
+            answerId: '',
+            nextQuId: ''
           }
         ]
       })
