@@ -46,7 +46,7 @@
             <q-card-separator class="q-mb-md q-mt-xl"/>
             <q-card-main>
             <div v-for="(form) in forms" :key="form.id">
-              <q-field class="q-mb-sm" label="Question Title: " >
+              <q-field class="q-mb-sm" label="Form Title: " >
                 <q-input v-model="form.fname" />
               </q-field>
             </div>
@@ -103,7 +103,7 @@ export default {
       this.forms[fIndex].questions[qIndex].answerChoices.splice(qIndex, 1)
     },
     generateForm () {
-      // this.selectedTab = 'QDesPos'
+      this.selectedTab = 'QDesPos'
       this.posTest()
     },
     posTest () {
