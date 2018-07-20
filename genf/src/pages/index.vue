@@ -34,7 +34,10 @@
            </div>
            </div>
             </q-card-main>
-          <q-btn class="q-ml-md q-mb-md" color="red" icon-right="navigate_next" @click="generateForm">Generate the form</q-btn>
+            <div class="row justify-center">
+              <q-btn class="q-mb-md" color="red" icon-right="navigate_next" @click="generateForm">Generate the form</q-btn>
+            </div>
+          <!-- <q-btn color="red" icon-right="navigate_next" @click="generateForm">Generate the form</q-btn> -->
           </q-card>
         </q-tab-pane>
           <!-- QDesPos Tab -->
@@ -46,11 +49,12 @@
             <q-card-separator class="q-mb-md q-mt-xl"/>
             <q-card-main>
             <div v-for="(form) in forms" :key="form.id">
-              <q-field class="q-mb-sm" label="Question Title: " >
+              <q-field class="q-mb-sm" label="Form Title: " >
                 <q-input v-model="form.fname" />
               </q-field>
             </div>
             </q-card-main>
+            <q-btn class="q-ml-md q-mb-md q-mt-md" color="amber-5" icon="navigate_before" @click="goBack">Go Back to Designer</q-btn>
             </q-card>
         </q-tab-pane>
       </q-tabs>
@@ -69,9 +73,11 @@ export default {
           questions: [
             {
               qtext: '',
+              qId: '',
               answerChoices: [
                 {
-                  answerId: ''
+                  answerId: '',
+                  nextQuId: ''
                 }
               ]
             }
@@ -84,9 +90,11 @@ export default {
     addRowQuestions (fIndex) {
       this.forms[fIndex].questions.push({
         qtext: '',
+        qId: '',
         answerChoices: [
           {
-            answerId: ''
+            answerId: '',
+            nextQuId: ''
           }
         ]
       })
@@ -103,8 +111,11 @@ export default {
       this.forms[fIndex].questions[qIndex].answerChoices.splice(qIndex, 1)
     },
     generateForm () {
-      // this.selectedTab = 'QDesPos'
+      this.selectedTab = 'QDesPos'
       this.posTest()
+    },
+    goBack () {
+      this.selectedTab = 'QDes'
     },
     posTest () {
       var lenForm = Object.keys(this.forms).length
