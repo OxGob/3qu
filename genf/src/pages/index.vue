@@ -116,9 +116,13 @@ export default {
         var lenQ = Object.keys(this.forms[iForm].questions).length
         for (jForm = 0; jForm < lenQ; jForm++) {
           this.$q.notify('Length of Qu: ' + lenQ)
+          // To get value for questions, set key to that of qtext which for now is 0. This works for all qs. change it to reflect question text once all is complete
+          var objQ = this.forms[iForm].questions[jForm]
+          this.$q.notify('OB Nu ' + lenQ + ': ' + objQ[Object.keys(objQ)[0]])
           var lenA = Object.keys(this.forms[iForm].questions[jForm].answerChoices).length
           for (aForm = 0; aForm < lenA; aForm++) {
             this.$q.notify('Length of An: ' + lenA)
+            this.$q.notify('Val Ans ' + lenA + ': ' + Object.values(this.forms[iForm].questions[jForm].answerChoices[aForm]))
           }
         }
       }
