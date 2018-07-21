@@ -18,16 +18,22 @@
               <q-card-separator class="q-mb-md q-mt-xl"/>
            <div v-for="(question, qIndex) in form.questions" :key="question.id">
             <q-btn class="q-mb-md" round size="sm" color="amber" icon="add" @click="addRowQuestions(fIndex)" />
-            <q-btn class="vertical-top" v-show="qIndex !==0" round size="sm" color="blue" icon="remove" @click="remRowQs(fIndex)" />
-            <q-field class="q-mb-sm" label="Question Title: " >
+            <q-btn class="q-mb-md q-ml-md" v-show="qIndex !==0" round size="sm" color="blue" icon="remove" @click="remRowQs(fIndex)" />
+            <q-field class="q-mb-sm" label="Question: " >
               <q-input v-model="question.qtext" />
+            </q-field>
+             <q-field class="q-mb-sm" label="Default ID: " >
+              <q-input v-model="question.nextDefaultId" />
             </q-field>
             <q-card-separator class="q-mb-md q-mt-xl"/>
               <div v-for="(answerChoice, aIndex) in question.answerChoices" :key="answerChoice.id">
                 <q-btn class="q-mb-md" round size="sm" color="green" icon="add" @click="addAnswers(fIndex, qIndex)" />
-                <q-btn class="vertical-top" v-show="aIndex !==0" round size="sm" color="negative" icon="remove" @click="remRowAns(fIndex, qIndex)" />
+                <q-btn class="q-mb-md q-ml-md" v-show="aIndex !==0" round size="sm" color="negative" icon="remove" @click="remRowAns(fIndex, qIndex)" />
                 <q-field class="q-mb-sm" label="Answer ID: ">
                   <q-input v-model="answerChoice.answerId" type="number" clearable />
+                </q-field>
+                <q-field class="q-mb-sm" label="Next Question ID: ">
+                  <q-input v-model="answerChoice.nextQuId" type="number" clearable />
                 </q-field>
             <q-card-separator class="q-mb-md q-mt-xl"/>
               </div>
@@ -37,7 +43,6 @@
             <div class="row justify-center">
               <q-btn class="q-mb-md" color="red" icon-right="navigate_next" @click="generateForm">Generate the form</q-btn>
             </div>
-          <!-- <q-btn color="red" icon-right="navigate_next" @click="generateForm">Generate the form</q-btn> -->
           </q-card>
         </q-tab-pane>
           <!-- QDesPos Tab -->
@@ -73,11 +78,12 @@ export default {
           questions: [
             {
               qtext: '',
-              qId: '',
+              qId: '', // integer
+              nextDefaultId: '', // if empty or undefined or keyword, then complete form after this question
               answerChoices: [
                 {
-                  answerId: '',
-                  nextQuId: ''
+                  answerId: '', // e.g. y
+                  nextQuId: '' // integer. If empty or undefined or keyword, then complete form after this question
                 }
               ]
             }
@@ -91,6 +97,7 @@ export default {
       this.forms[fIndex].questions.push({
         qtext: '',
         qId: '',
+        nextDefaultId: '',
         answerChoices: [
           {
             answerId: '',
@@ -101,7 +108,8 @@ export default {
     },
     addAnswers (fIndex, qIndex) {
       this.forms[fIndex].questions[qIndex].answerChoices.push({
-        answerId: ''
+        answerId: '',
+        nextQuId: ''
       })
     },
     remRowQs (fIndex) {
