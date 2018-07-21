@@ -15,6 +15,9 @@
               <q-field class="q-mb-sm" label="Form Title: " helper="Please enter the title of the form.">
                 <q-input v-model="form.fname" type="text" clearable />
               </q-field>
+              <q-field class="q-mb-sm" label="Form Description: " helper="Please enter a description for the form.">
+                <q-input v-model="form.fDescription" type="text" clearable />
+              </q-field>
               <q-card-separator class="q-mb-md q-mt-xl"/>
            <div v-for="(question, qIndex) in form.questions" :key="question.id">
             <q-btn class="q-mb-md" round size="sm" color="amber" icon="add" @click="addRowQuestions(fIndex)" />
@@ -57,9 +60,15 @@
               <q-field class="q-mb-sm" label="Form Title: " >
                 <q-input v-model="form.fname" />
               </q-field>
+              <q-field class="q-mb-sm" label="Form Description: " >
+                <q-input v-model="form.fDescription" />
+              </q-field>
             </div>
             </q-card-main>
             <q-btn class="q-ml-md q-mb-md q-mt-md" color="amber-5" icon="navigate_before" @click="goBack">Go Back to Designer</q-btn>
+            </q-card>
+            <q-card class="bg-blue-2 q-ma-xl">
+              asd
             </q-card>
         </q-tab-pane>
       </q-tabs>
@@ -75,6 +84,7 @@ export default {
       forms: [
         {
           fname: '',
+          fDescription: '',
           questions: [
             {
               qtext: '',
