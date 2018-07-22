@@ -22,13 +22,16 @@
            <div v-for="(question, qIndex) in form.questions" :key="question.id">
             <q-btn class="q-mb-md" round size="sm" color="amber" icon="add" @click="addRowQuestions(fIndex)" />
             <q-btn class="q-mb-md q-ml-md" v-show="qIndex !==0" round size="sm" color="blue" icon="remove" @click="remRowQs(fIndex)" />
-            <q-field class="q-mb-sm" label="Question: " >
+            <q-field class="q-mb-sm" label="Question: " helper="Please enter a question.">
               <q-input v-model="question.qtext" type="text" clearable />
             </q-field>
-            <q-field class="q-mb-sm" label="Question ID: " >
+            <q-field class="q-mb-sm" label="Help: " helper="Please enter a description for any helper label.">
+              <q-input v-model="question.qHelp" type="text" clearable />
+            </q-field>
+            <q-field class="q-mb-sm" label="Question ID: ">
               <q-input v-model="question.qId" type="number" clearable />
             </q-field>
-             <q-field class="q-mb-sm" label="Default ID: " >
+             <q-field class="q-mb-sm" label="Default ID: " helper="Please enter the next Question ID to proceed. To terminate the form, use the reserved keyword FORMEND or leave empty.">
               <q-input v-model="question.nextDefaultId" type="number" clearable />
             </q-field>
             <q-card-separator class="q-mb-md q-mt-xl"/>
@@ -38,7 +41,7 @@
                 <q-field class="q-mb-sm" label="Answer ID: ">
                   <q-input v-model="answerChoice.answerId" type="number" clearable />
                 </q-field>
-                <q-field class="q-mb-sm" label="Next Question ID: ">
+                <q-field class="q-mb-sm" label="Next Question ID: " helper="Please enter the next Question ID to proceed. To terminate the form, use the reserved keyword FORMEND or leave empty." >
                   <q-input v-model="answerChoice.nextQuId" type="number" clearable />
                 </q-field>
             <q-card-separator class="q-mb-md q-mt-xl"/>
@@ -71,7 +74,7 @@
               <!-- Questions -->
               <q-card class="bg-teal-1 q-mt-lg q-mb-md">
               <div v-for="(question) in form.questions" :key="question.id">
-                <q-field class="q-ml-md q-mt-md q-mb-md" label="Question: " >
+                <q-field class="q-ml-md q-mt-md q-mb-md" label="Question: " helper="Please read the question carefully." >
                   <q-input v-model="question.qtext" />
                 </q-field>
                 <q-card-separator class="q-mb-md q-mt-md"/>
