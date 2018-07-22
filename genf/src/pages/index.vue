@@ -115,6 +115,9 @@ export default {
     return {
       selectedTab: 'QDes',
       indexToShow: 0,
+      currFIndex: 55,
+      currQIndex: 0,
+      currAIndex: 0,
       forms: [
         {
           fname: '',
@@ -216,7 +219,11 @@ export default {
     },
     goNext () {
       // To add answer Id navigation logic. depending on Default ID or answer ID navigate
-      // input: next QID || Output: navigation + add to answer object(?)
+      // input: next QID from current Q/Ans || Output: navigation + add to answer object(?)
+      // check next question Id from current answer ID --> related to current index
+      var nextQId = this.forms[0].questions[0].answerChoices[0].nextQuId
+      this.$q.notify('Next Ans Id is : ' + nextQId)
+      // this.$q.notify('crrent q ind : ' + this.currFIndex)
     },
     finishForm () {
       // Button is showed only if keyword in Default ID
