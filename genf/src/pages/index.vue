@@ -76,7 +76,8 @@
               <q-card-separator class="q-mb-md q-mt-xl"/>
               <!-- Questions -->
               <q-card class="bg-teal-1 q-mt-lg q-mb-md">
-              <div v-for="(question) in form.questions" :key="question.id">
+              <div v-for="(question, qIndex) in form.questions" :key="question.id">
+                <div  v-show="qIndex === indexToShow">
                 <q-field class="q-ml-md q-mt-md q-mb-md" label="Question Number: " >
                   <q-input v-model="question.qId" align="center" />
                 </q-field>
@@ -94,6 +95,8 @@
                   </q-card>
                   <q-btn class="q-ml-md q-mb-md q-mt-md" icon-right="navigate_next" color="blue-7" label="Next" @click="goNext"/>
                   <q-btn class="q-mr-md q-mb-md q-mt-md float-right" icon-right="done_all" color="red-7" label="Finish" @click="finishForm"/>
+                  <q-card-separator class="q-mb-md q-mt-sm"/>
+                </div>
               </div>
               </q-card>
             </div>
@@ -111,6 +114,7 @@ export default {
   data () {
     return {
       selectedTab: 'QDes',
+      indexToShow: 0,
       forms: [
         {
           fname: '',
@@ -201,6 +205,10 @@ export default {
           }
         }
       }
+    },
+    showQu () {
+      // Show only Q and A according to relevant qID
+      // Set value of var indexToShow
     },
     toggleButton () {
       // Depending on reserved keyword in question/answer, show/hide Next/Finish buttons
