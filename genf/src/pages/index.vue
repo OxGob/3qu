@@ -13,39 +13,39 @@
             <q-card-main>
             <div v-for="(form, fIndex) in forms" :key="form.id">
               <q-field class="q-mb-sm" label="Form Title: " helper="Please enter the title of the form. This IS displayed to the user.">
-                <q-input v-model="form.fname" type="text" clearable />
+                <q-input v-model="form.fname" type="text" align="center" clearable />
               </q-field>
               <q-field class="q-mb-sm" label="Form Description: " helper="Please enter a description for the form. This IS displayed to the user.">
-                <q-input v-model="form.fDescription" type="text" clearable />
+                <q-input v-model="form.fDescription" type="text" align="center" clearable />
               </q-field>
               <q-card-separator class="q-mb-md q-mt-xl"/>
            <div v-for="(question, qIndex) in form.questions" :key="question.id">
             <q-btn class="q-mb-md" round size="sm" color="amber" icon="add" @click="addRowQuestions(fIndex)" />
             <q-btn class="q-mb-md q-ml-md" v-show="qIndex !==0" round size="sm" color="blue" icon="remove" @click="remRowQs(fIndex)" />
             <q-field class="q-mb-sm" label="Question: " helper="Please enter a question. This IS displayed to the user.">
-              <q-input v-model="question.qtext" type="text" clearable />
+              <q-input v-model="question.qtext" type="text" align="center" clearable />
             </q-field>
             <q-field class="q-mb-sm" label="Help: " helper="Please enter a description for any helper label. This IS displayed to the user.">
-              <q-input v-model="question.qHelp" type="text" clearable />
+              <q-input v-model="question.qHelp" type="text" align="center" clearable />
             </q-field>
             <q-field class="q-mb-sm" label="Question ID: " helper="Please enter a the Question ID. This IS NOT displayed to the user and is for INTERNAL use only.">
-              <q-input v-model="question.qId" type="number" clearable />
+              <q-input v-model="question.qId" type="number" align="center" clearable />
             </q-field>
              <q-field class="q-mb-sm" label="Default ID: " helper="Please enter the next Question ID (a number) to proceed. To terminate the form, use the reserved keyword FORMEND or leave empty. This IS NOT displayed to the user and is for INTERNAL use only.">
-              <q-input v-model="question.nextDefaultId" type="number" clearable />
+              <q-input v-model="question.nextDefaultId" type="number" align="center" clearable />
             </q-field>
             <q-card-separator class="q-mb-md q-mt-xl"/>
               <div v-for="(answerChoice, aIndex) in question.answerChoices" :key="answerChoice.id">
                 <q-btn class="q-mb-md" round size="sm" color="green" icon="add" @click="addAnswerChoices(fIndex, qIndex)" />
                 <q-btn class="q-mb-md q-ml-md" v-show="aIndex !==0" round size="sm" color="negative" icon="remove" @click="remRowAns(fIndex, qIndex)" />
                 <q-field class="q-mb-sm" label="Answer Text: " helper="Please enter the answer. e.g. Yes or No. This IS displayed to the user.">
-                  <q-input v-model="answerChoice.text" type="text" clearable />
+                  <q-input v-model="answerChoice.text" type="text" align="center" clearable />
                 </q-field>
                  <q-field class="q-mb-sm" label="Answer ID: " helper="Please enter the answer ID. This IS NOT displayed to the user and is for INTERNAL use only." >
-                  <q-input v-model="answerChoice.answerId" type="number" clearable />
+                  <q-input v-model="answerChoice.answerId" type="number" align="center" clearable />
                 </q-field>
                 <q-field class="q-mb-sm" label="Next Question ID: " helper="Please enter the next Question ID (a number) to proceed. To terminate the form, use the reserved keyword FORMEND or leave empty. This IS NOT displayed to the user and is for INTERNAL use only." >
-                  <q-input v-model="answerChoice.nextQuId" type="number" clearable />
+                  <q-input v-model="answerChoice.nextQuId" type="number" align="center" clearable />
                 </q-field>
             <q-card-separator class="q-mb-md q-mt-xl"/>
               </div>
@@ -77,6 +77,9 @@
               <!-- Questions -->
               <q-card class="bg-teal-1 q-mt-lg q-mb-md">
               <div v-for="(question) in form.questions" :key="question.id">
+                <q-field class="q-ml-md q-mt-md q-mb-md" label="Question Number: " >
+                  <q-input v-model="question.qId" align="center" />
+                </q-field>
                 <q-field class="q-ml-md q-mt-md q-mb-md" label="Question: " helper="Please read the question carefully." >
                   <q-input v-model="question.qtext" />
                 </q-field>
