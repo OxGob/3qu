@@ -83,6 +83,8 @@
                     </q-field>
                   </div>
                   </q-card>
+                  <q-btn class="q-ml-md q-mb-md q-mt-md" icon-right="navigate_next" color="blue-7" label="Next" @click="goNext"/>
+                  <q-btn class="q-mr-md q-mb-md q-mt-md float-right" icon-right="done_all" color="red-7" label="Finish" @click="finishForm"/>
               </div>
               </q-card>
             </div>
@@ -174,6 +176,18 @@ export default {
           }
         }
       }
+    },
+    toggleButton () {
+      // Depending on reserved keyword in question/answer, show/hide Next/Finish buttons
+      // input: Default Id
+    },
+    goNext () {
+      // To add answer Id navigation logic. depending on Default ID or answer ID navigate
+      // input: next QID || Output: navigation + add to answer object(?)
+    },
+    finishForm () {
+      // Button is showed only if keyword in Default ID
+      // Output: Saves to answer object. Closes form.
     }
   }
 }
