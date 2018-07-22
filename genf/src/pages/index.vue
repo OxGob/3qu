@@ -33,7 +33,7 @@
             </q-field>
             <q-card-separator class="q-mb-md q-mt-xl"/>
               <div v-for="(answerChoice, aIndex) in question.answerChoices" :key="answerChoice.id">
-                <q-btn class="q-mb-md" round size="sm" color="green" icon="add" @click="addAnswers(fIndex, qIndex)" />
+                <q-btn class="q-mb-md" round size="sm" color="green" icon="add" @click="addAnswerChoices(fIndex, qIndex)" />
                 <q-btn class="q-mb-md q-ml-md" v-show="aIndex !==0" round size="sm" color="negative" icon="remove" @click="remRowAns(fIndex, qIndex)" />
                 <q-field class="q-mb-sm" label="Answer ID: ">
                   <q-input v-model="answerChoice.answerId" type="number" clearable />
@@ -109,14 +109,26 @@ export default {
           questions: [
             {
               qtext: '',
+              qHelp: '',
               qId: '', // integer
               nextDefaultId: '', // if empty or undefined or keyword, then complete form after this question
+              questionType: '',
               answerChoices: [
                 {
+                  text: '',
                   answerId: '', // e.g. y
                   nextQuId: '' // integer. If empty or undefined or keyword, then complete form after this question
                 }
               ]
+            }
+          ],
+          answers:
+          [
+            {
+              questionId: '',
+              answerText: '',
+              answerId: '',
+              timeStamp: ''
             }
           ]
         }
@@ -127,8 +139,10 @@ export default {
     addRowQuestions (fIndex) {
       this.forms[fIndex].questions.push({
         qtext: '',
+        qHelp: '',
         qId: '',
         nextDefaultId: '',
+        questionType: '',
         answerChoices: [
           {
             answerId: '',
@@ -137,8 +151,9 @@ export default {
         ]
       })
     },
-    addAnswers (fIndex, qIndex) {
+    addAnswerChoices (fIndex, qIndex) {
       this.forms[fIndex].questions[qIndex].answerChoices.push({
+        text: '',
         answerId: '',
         nextQuId: ''
       })
