@@ -144,8 +144,7 @@ export default {
               ]
             }
           ],
-          answers:
-          [
+          answers: [
             {
               questionId: '',
               answerText: '',
@@ -247,10 +246,28 @@ export default {
       // Show next Question
       this.indexToShow = this.currQIndex
       this.toggleButton()
+      this.addAnswers()
     },
     finishForm () {
       // Button is showed only if keyword in Default ID
       // Output: Saves to answer object. Closes form.
+    },
+    addAnswers () {
+      var formIndex = this.currFIndex
+      this.$q.notify('the form index is: ' + formIndex)
+      var questionIndex = this.currQIndex
+      var answerIndex = this.currAIndex
+      // To fill in respective answers for each form, use index of questions
+      this.forms[formIndex].answers[questionIndex].questionId = this.forms[formIndex].questions[questionIndex].qId
+      this.forms[formIndex].answers[questionIndex].answerText = this.forms[formIndex].questions[questionIndex].answerChoices[answerIndex].text
+      this.forms[formIndex].answers[questionIndex].answerId = this.forms[formIndex].questions[questionIndex].answerChoices[answerIndex].answerId
+      this.forms[formIndex].answers[questionIndex].timeStamp = 'timstmp'
+      this.forms[formIndex].answers.push({
+        questionId: '',
+        answerText: '',
+        answerId: '',
+        timeStamp: ''
+      })
     }
   }
 }
