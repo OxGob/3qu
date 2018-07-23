@@ -261,13 +261,17 @@ export default {
       this.forms[formIndex].answers[questionIndex].questionId = this.forms[formIndex].questions[questionIndex].qId
       this.forms[formIndex].answers[questionIndex].answerText = this.forms[formIndex].questions[questionIndex].answerChoices[answerIndex].text
       this.forms[formIndex].answers[questionIndex].answerId = this.forms[formIndex].questions[questionIndex].answerChoices[answerIndex].answerId
-      this.forms[formIndex].answers[questionIndex].timeStamp = 'timstmp'
+      this.forms[formIndex].answers[questionIndex].timeStamp = this.timeStamp1(new Date(), 'en-gb')
       this.forms[formIndex].answers.push({
         questionId: '',
         answerText: '',
         answerId: '',
         timeStamp: ''
       })
+    },
+    timeStamp1 (date, locale) {
+      const event = (date === undefined) ? new Date() : new Date(date)
+      return event.toLocaleDateString(locale) + ' ' + event.toLocaleTimeString(locale)
     }
   }
 }
