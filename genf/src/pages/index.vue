@@ -31,8 +31,8 @@
             <q-field class="q-mb-sm" label="Question ID: " helper="Please enter a the Question ID. This IS NOT displayed to the user and is for INTERNAL use only.">
               <q-input v-model="question.qId" type="number" align="center" clearable />
             </q-field>
-             <q-field class="q-mb-sm" label="Default ID: " helper="Please enter the next Question ID (a number) to proceed. To terminate the form, use the reserved keyword FORMEND or leave empty. This IS NOT displayed to the user and is for INTERNAL use only.">
-              <q-input v-model="question.nextDefaultId" type="number" align="center" clearable />
+             <q-field class="q-mb-sm" label="Default ID: " helper="Please enter the next Question ID (a number) to proceed. To terminate the form, use the reserved keyword ENDFORM or leave the field blank. This IS NOT displayed to the user and is for INTERNAL use only.">
+              <q-input v-model="question.nextDefaultId" type="text" align="center" clearable />
             </q-field>
             <q-card-separator class="q-mb-md q-mt-xl"/>
               <div v-for="(answerChoice, aIndex) in question.answerChoices" :key="answerChoice.id">
@@ -44,7 +44,7 @@
                  <q-field class="q-mb-sm" label="Answer ID: " helper="Please enter the answer ID. This IS NOT displayed to the user and is for INTERNAL use only." >
                   <q-input v-model="answerChoice.answerId" type="number" align="center" clearable />
                 </q-field>
-                <q-field class="q-mb-sm" label="Next Question ID: " helper="Please enter the next Question ID (a number) to proceed. To terminate the form, use the reserved keyword FORMEND or leave empty. This IS NOT displayed to the user and is for INTERNAL use only." >
+                <q-field class="q-mb-sm" label="Next Question ID: " helper="Please enter the next Question ID (a number) to proceed. To terminate the form, leave the field blank. This IS NOT displayed to the user and is for INTERNAL use only." >
                   <q-input v-model="answerChoice.nextQuId" type="number" align="center" clearable />
                 </q-field>
             <q-card-separator class="q-mb-md q-mt-xl"/>
@@ -93,12 +93,16 @@
                     </q-field>
                   </div>
                   </q-card>
+                  <div  v-show="showNextBtn">
                   <q-btn class="q-ml-md q-mb-md q-mt-md" icon-right="navigate_next" color="blue-7" label="Next" @click="goNext"/>
-                  <q-btn class="q-mr-md q-mb-md q-mt-md float-right" icon-right="done_all" color="red-7" label="Finish" @click="finishForm"/>
+                  </div>
                   <q-card-separator class="q-mb-md q-mt-sm"/>
                 </div>
               </div>
               </q-card>
+            </div>
+             <div  v-show="showFinishBtn">
+              <q-btn class="q-mr-md q-mb-md float-right" icon-right="done_all" color="red-7" label="Finish" @click="finishForm"/>
             </div>
             </q-card-main>
             <q-btn class="q-ml-md q-mb-md q-mt-md" color="amber-5" icon="navigate_before" @click="goBack">Go Back to Designer</q-btn>
@@ -118,6 +122,8 @@ export default {
       currFIndex: 0,
       currQIndex: 0,
       currAIndex: 0,
+      showNextBtn: true,
+      showFinishBtn: false,
       forms: [
         {
           fname: '',
@@ -183,6 +189,7 @@ export default {
     },
     generateForm () {
       this.selectedTab = 'QDesPos'
+      this.toggleButton()
       // this.posTest()
     },
     goBack () {
@@ -216,6 +223,16 @@ export default {
     toggleButton () {
       // Depending on reserved keyword in question/answer, show/hide Next/Finish buttons
       // input: Default Id
+      var formIndex = this.currFIndex
+      var answerIndex = this.currAIndex
+      var questionIndex = this.currQIndex
+      var keywordQu = this.forms[formIndex].questions[questionIndex].nextDefaultId.toUpperCase()
+      var keywordAn = this.forms[formIndex].questions[questionIndex].answerChoices[answerIndex].nextQuId
+      if (keywordQu === 'ENDFORM' || keywordQu === '' || keywordAn === '') {
+        this.$q.notify('KWord : ' + keywordQu)
+        this.showNextBtn = false
+        this.showFinishBtn = true
+      }
     },
     goNext () {
       // To add answer Id navigation logic. depending on Default ID or answer ID navigate
@@ -229,6 +246,7 @@ export default {
       this.currQIndex = this.forms[formIndex].questions[questionIndex].answerChoices[answerIndex].nextQuId
       // Show next Question
       this.indexToShow = this.currQIndex
+      this.toggleButton()
     },
     finishForm () {
       // Button is showed only if keyword in Default ID
