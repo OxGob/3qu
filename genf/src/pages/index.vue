@@ -26,7 +26,7 @@
             <!-- <q-btn class="q-mb-md" round size="sm" color="amber" icon="add" @click="addRowQuestions(fIndex)" /> -->
             <q-btn class="q-mb-md q-ml-md" v-show="qIndex !==0" round size="sm" color="blue" icon="remove" @click="remRowQs(fIndex, qIndex)" />
             <q-field class="q-mb-sm" label="Question ID: " helper="Please enter a the Question ID. This IS NOT displayed to the user and is for INTERNAL use only.">
-              <q-input v-model="question.qId" type="number" align="center" onkeypress="return event.charCode >= 48 && event.charCode <= 57" clearable />
+              <q-input v-model="question.qId" type="number" align="center" readonly />
             </q-field>
             <q-field class="q-mb-sm" label="Question: " helper="Please enter a question. This IS displayed to the user.">
               <q-input v-model="question.qtext" type="textarea" rows="6" align="center" clearable />
@@ -125,7 +125,8 @@ export default {
   data () {
     return {
       selectedTab: 'QDes',
-      genQuId: 1,
+      genQuIdCounter: 0,
+      arrayGenQuId: [0],
       nextQuIndex: 0,
       indexToShow: 0,
       currFIndex: 0,
@@ -141,7 +142,7 @@ export default {
             {
               qtext: '',
               qHelp: '',
-              qId: 1, // integer
+              qId: 0, // integer
               nextDefaultId: '', // if empty or undefined or keyword, then complete form after this question
               questionType: '',
               answerChoices: [
@@ -168,11 +169,12 @@ export default {
   methods: {
     // Add Remove
     addRowQuestions (fIndex) {
-      this.genQuId++
+      this.genQuIdCounter++
+      this.arrayGenQuId.push(this.genQuIdCounter)
       this.forms[fIndex].questions.push({
         qtext: '',
         qHelp: '',
-        qId: this.genQuId,
+        qId: this.genQuIdCounter,
         nextDefaultId: '',
         questionType: '',
         answerChoices: [
@@ -192,7 +194,15 @@ export default {
       })
     },
     remRowQs (fIndex, qIndex) {
+      // var indexToRemoveFromArray = this.forms[fIndex].questions[qIndex].qId
+      // this.$q.notify('qId : ' + indexToRemoveFromArray)
       this.forms[fIndex].questions.splice(qIndex, 1)
+      // Find index to remove from array of quIds.- indexToRemove
+      // This is used for validation when generating form to ensure form can't be generated if there is no valid next Qu ID
+      // var indexToRemove = this.arrayGenQuId.indexOf(qIndex + 1)
+      // if (indexToRemoveFromArray > -1) {
+      //   this.arrayGenQuId.splice(indexToRemoveFromArray, 1)
+      // }
     },
     remRowAns (fIndex, qIndex, aIndex) {
       this.forms[fIndex].questions[qIndex].answerChoices.splice(aIndex, 1)
