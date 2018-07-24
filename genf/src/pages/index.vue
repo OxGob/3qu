@@ -92,7 +92,7 @@
                   <q-card class="bg-green-2 q-ml-md q-mt-lg q-mb-md q-mr-md">
                   <div v-for="(answerChoice) in question.answerChoices" :key="answerChoice.id">
                     <q-field class="q-ml-md q-mt-md q-mb-md" label="Answer: " >
-                      <q-input class="q-mb-md" v-model="answerChoice.text" align="center" readonly/>
+                      <q-input class="q-mb-md" v-model="answerChoice.text" align="center" onkeypress="return event.charCode >= 48 && event.charCode <= 57" clearable/>
                     </q-field>
                   </div>
                   </q-card>
