@@ -25,7 +25,7 @@
             <q-btn class="q-mb-md" round size="sm" color="amber" icon="add" @click="addRowQuestions(fIndex)" />
             <q-btn class="q-mb-md q-ml-md" v-show="qIndex !==0" round size="sm" color="blue" icon="remove" @click="remRowQs(fIndex)" />
             <q-field class="q-mb-sm" label="Question: " helper="Please enter a question. This IS displayed to the user.">
-              <q-input v-model="question.qtext" type="text" align="center" clearable />
+              <q-input v-model="question.qtext" type="textarea" rows="6" align="center" clearable />
             </q-field>
             <q-field class="q-mb-sm" label="Help: " helper="Please enter a description for any helper label. This IS displayed to the user.">
               <q-input v-model="question.qHelp" type="text" align="center" clearable />
@@ -85,7 +85,7 @@
                   <q-input v-model="question.qId" align="center" readonly/>
                 </q-field>
                 <q-field class="q-ml-md q-mt-md q-mb-md" label="Question: " helper="Please read the question carefully." >
-                  <q-input v-model="question.qtext" align="center" readonly/>
+                  <q-input v-model="question.qtext" type="textarea" rows="6" align="center" readonly/>
                 </q-field>
                 <q-card-separator class="q-mb-md q-mt-md"/>
           <!-- QDesPos - Answers -->
