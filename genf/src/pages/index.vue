@@ -121,6 +121,8 @@ export default {
   data () {
     return {
       selectedTab: 'QDes',
+      genQuId: 0,
+      nextQuIndex: 0,
       indexToShow: 0,
       currFIndex: 0,
       currQIndex: 0,
@@ -160,6 +162,7 @@ export default {
     }
   },
   methods: {
+    // Add Remove
     addRowQuestions (fIndex) {
       this.forms[fIndex].questions.push({
         qtext: '',
@@ -189,6 +192,24 @@ export default {
     remRowAns (fIndex, qIndex) {
       this.forms[fIndex].questions[qIndex].answerChoices.splice(qIndex, 1)
     },
+    addAnswers () {
+      var formIndex = this.currFIndex
+      this.$q.notify('the form index is: ' + formIndex)
+      var questionIndex = this.currQIndex
+      var answerIndex = this.currAIndex
+      // To fill in respective answers for each form, use index of questions
+      this.forms[formIndex].answers[questionIndex].questionId = this.forms[formIndex].questions[questionIndex].qId
+      this.forms[formIndex].answers[questionIndex].answerText = this.forms[formIndex].questions[questionIndex].answerChoices[answerIndex].text
+      this.forms[formIndex].answers[questionIndex].answerId = this.forms[formIndex].questions[questionIndex].answerChoices[answerIndex].answerId
+      this.forms[formIndex].answers[questionIndex].timeStamp = this.timeStamp1(new Date(), 'en-gb')
+      this.forms[formIndex].answers.push({
+        questionId: '',
+        answerText: '',
+        answerId: '',
+        timeStamp: ''
+      })
+    },
+    // Navigation Methods
     generateForm () {
       this.selectedTab = 'QDesPos'
       this.toggleButton()
@@ -196,27 +217,6 @@ export default {
     },
     goBack () {
       this.selectedTab = 'QDes'
-    },
-    posTest () {
-      var lenForm = Object.keys(this.forms).length
-      var iForm = ''
-      var jForm = ''
-      var aForm = ''
-      for (iForm = 0; iForm < lenForm; iForm++) {
-        this.$q.notify('Length of Form: ' + lenForm)
-        var lenQ = Object.keys(this.forms[iForm].questions).length
-        for (jForm = 0; jForm < lenQ; jForm++) {
-          this.$q.notify('Length of Qu: ' + lenQ)
-          // To get value for questions, set key to that of qtext which for now is 0. This works for all qs. change it to reflect question text once all is complete
-          var objQ = this.forms[iForm].questions[jForm]
-          this.$q.notify('OB Nu ' + lenQ + ': ' + objQ[Object.keys(objQ)[0]])
-          var lenA = Object.keys(this.forms[iForm].questions[jForm].answerChoices).length
-          for (aForm = 0; aForm < lenA; aForm++) {
-            this.$q.notify('Length of An: ' + lenA)
-            this.$q.notify('Val Ans ' + lenA + ': ' + Object.values(this.forms[iForm].questions[jForm].answerChoices[aForm]))
-          }
-        }
-      }
     },
     showQu () {
       // Show only Q and A according to relevant qID
@@ -255,26 +255,39 @@ export default {
       // Button is showed only if keyword in Default ID
       // Output: Saves to answer object. Closes form.
     },
-    addAnswers () {
-      var formIndex = this.currFIndex
-      this.$q.notify('the form index is: ' + formIndex)
-      var questionIndex = this.currQIndex
-      var answerIndex = this.currAIndex
-      // To fill in respective answers for each form, use index of questions
-      this.forms[formIndex].answers[questionIndex].questionId = this.forms[formIndex].questions[questionIndex].qId
-      this.forms[formIndex].answers[questionIndex].answerText = this.forms[formIndex].questions[questionIndex].answerChoices[answerIndex].text
-      this.forms[formIndex].answers[questionIndex].answerId = this.forms[formIndex].questions[questionIndex].answerChoices[answerIndex].answerId
-      this.forms[formIndex].answers[questionIndex].timeStamp = this.timeStamp1(new Date(), 'en-gb')
-      this.forms[formIndex].answers.push({
-        questionId: '',
-        answerText: '',
-        answerId: '',
-        timeStamp: ''
-      })
-    },
+    // Misc methods
     timeStamp1 (date, locale) {
       const event = (date === undefined) ? new Date() : new Date(date)
       return event.toLocaleDateString(locale) + ' ' + event.toLocaleTimeString(locale)
+    },
+    generateQuId () {
+      // Generate the question ID. This is related to QU Index
+      // QU ID = Q.Index + 1
+    },
+    generateNextQuIndex () {
+      // Generate the next question index. This is related to QU Index
+      // Q.Index = QU ID - 1, Can't be negative
+    },
+    posTest () {
+      var lenForm = Object.keys(this.forms).length
+      var iForm = ''
+      var jForm = ''
+      var aForm = ''
+      for (iForm = 0; iForm < lenForm; iForm++) {
+        this.$q.notify('Length of Form: ' + lenForm)
+        var lenQ = Object.keys(this.forms[iForm].questions).length
+        for (jForm = 0; jForm < lenQ; jForm++) {
+          this.$q.notify('Length of Qu: ' + lenQ)
+          // To get value for questions, set key to that of qtext which for now is 0. This works for all qs. change it to reflect question text once all is complete
+          var objQ = this.forms[iForm].questions[jForm]
+          this.$q.notify('OB Nu ' + lenQ + ': ' + objQ[Object.keys(objQ)[0]])
+          var lenA = Object.keys(this.forms[iForm].questions[jForm].answerChoices).length
+          for (aForm = 0; aForm < lenA; aForm++) {
+            this.$q.notify('Length of An: ' + lenA)
+            this.$q.notify('Val Ans ' + lenA + ': ' + Object.values(this.forms[iForm].questions[jForm].answerChoices[aForm]))
+          }
+        }
+      }
     }
   }
 }
