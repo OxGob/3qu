@@ -19,20 +19,24 @@
               <q-field class="q-mb-sm" label="Form Description: " helper="Please enter a description for the form. This IS displayed to the user.">
                 <q-input v-model="form.fDescription" type="text" align="center" clearable />
               </q-field>
+              <q-btn class="q-mt-sm" label="Add Questions" color="amber" icon="add" @click="addRowQuestions(fIndex)" />
               <q-card-separator class="q-mb-md q-mt-xl"/>
       <!-- QDes - Questions -->
            <div v-for="(question, qIndex) in form.questions" :key="question.id">
-            <q-btn class="q-mb-md" round size="sm" color="amber" icon="add" @click="addRowQuestions(fIndex)" />
+            <!-- <q-btn class="q-mb-md" round size="sm" color="amber" icon="add" @click="addRowQuestions(fIndex)" /> -->
             <q-btn class="q-mb-md q-ml-md" v-show="qIndex !==0" round size="sm" color="blue" icon="remove" @click="remRowQs(fIndex)" />
+            <q-field class="q-mb-sm" label="Question ID: " helper="Please enter a the Question ID. This IS NOT displayed to the user and is for INTERNAL use only.">
+              <q-input v-model="question.qId" type="number" align="center" onkeypress="return event.charCode >= 48 && event.charCode <= 57" clearable />
+            </q-field>
             <q-field class="q-mb-sm" label="Question: " helper="Please enter a question. This IS displayed to the user.">
               <q-input v-model="question.qtext" type="textarea" rows="6" align="center" clearable />
             </q-field>
             <q-field class="q-mb-sm" label="Help: " helper="Please enter a description for any helper label. This IS displayed to the user.">
               <q-input v-model="question.qHelp" type="text" align="center" clearable />
             </q-field>
-            <q-field class="q-mb-sm" label="Question ID: " helper="Please enter a the Question ID. This IS NOT displayed to the user and is for INTERNAL use only.">
+            <!-- <q-field class="q-mb-sm" label="Question ID: " helper="Please enter a the Question ID. This IS NOT displayed to the user and is for INTERNAL use only.">
               <q-input v-model="question.qId" type="number" align="center" onkeypress="return event.charCode >= 48 && event.charCode <= 57" clearable />
-            </q-field>
+            </q-field> -->
              <q-field class="q-mb-sm" label="Default ID: " helper="Please enter the next Question ID (a number) to proceed. To terminate the form, use the reserved keyword ENDFORM or leave the field blank. This IS NOT displayed to the user and is for INTERNAL use only.">
               <q-input v-model="question.nextDefaultId" type="text" align="center" clearable />
             </q-field>
