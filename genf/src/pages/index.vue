@@ -24,7 +24,7 @@
       <!-- QDes - Questions -->
            <div v-for="(question, qIndex) in form.questions" :key="question.id">
             <!-- <q-btn class="q-mb-md" round size="sm" color="amber" icon="add" @click="addRowQuestions(fIndex)" /> -->
-            <q-btn class="q-mb-md q-ml-md" v-show="qIndex !==0" round size="sm" color="blue" icon="remove" @click="remRowQs(fIndex)" />
+            <q-btn class="q-mb-md q-ml-md" v-show="qIndex !==0" round size="sm" color="blue" icon="remove" @click="remRowQs(fIndex, qIndex)" />
             <q-field class="q-mb-sm" label="Question ID: " helper="Please enter a the Question ID. This IS NOT displayed to the user and is for INTERNAL use only.">
               <q-input v-model="question.qId" type="number" align="center" onkeypress="return event.charCode >= 48 && event.charCode <= 57" clearable />
             </q-field>
@@ -44,7 +44,7 @@
       <!-- QDes - Answers -->
               <div v-for="(answerChoice, aIndex) in question.answerChoices" :key="answerChoice.id">
                 <q-btn class="q-mb-md" round size="sm" color="green" icon="add" @click="addAnswerChoices(fIndex, qIndex)" />
-                <q-btn class="q-mb-md q-ml-md" v-show="aIndex !==0" round size="sm" color="negative" icon="remove" @click="remRowAns(fIndex, qIndex)" />
+                <q-btn class="q-mb-md q-ml-md" v-show="aIndex !==0" round size="sm" color="negative" icon="remove" @click="remRowAns(fIndex, qIndex, aIndex)" />
                 <q-field class="q-mb-sm" label="Answer Text: " helper="Please enter the answer. e.g. Yes or No. This IS displayed to the user.">
                   <q-input v-model="answerChoice.text" type="text" align="center" clearable />
                 </q-field>
@@ -125,7 +125,7 @@ export default {
   data () {
     return {
       selectedTab: 'QDes',
-      genQuId: 0,
+      genQuId: 1,
       nextQuIndex: 0,
       indexToShow: 0,
       currFIndex: 0,
@@ -141,7 +141,7 @@ export default {
             {
               qtext: '',
               qHelp: '',
-              qId: '', // integer
+              qId: 1, // integer
               nextDefaultId: '', // if empty or undefined or keyword, then complete form after this question
               questionType: '',
               answerChoices: [
@@ -168,10 +168,11 @@ export default {
   methods: {
     // Add Remove
     addRowQuestions (fIndex) {
+      this.genQuId++
       this.forms[fIndex].questions.push({
         qtext: '',
         qHelp: '',
-        qId: '',
+        qId: this.genQuId,
         nextDefaultId: '',
         questionType: '',
         answerChoices: [
@@ -190,11 +191,11 @@ export default {
         nextQuId: ''
       })
     },
-    remRowQs (fIndex) {
-      this.forms[fIndex].questions.splice(fIndex, 1)
+    remRowQs (fIndex, qIndex) {
+      this.forms[fIndex].questions.splice(qIndex, 1)
     },
-    remRowAns (fIndex, qIndex) {
-      this.forms[fIndex].questions[qIndex].answerChoices.splice(qIndex, 1)
+    remRowAns (fIndex, qIndex, aIndex) {
+      this.forms[fIndex].questions[qIndex].answerChoices.splice(aIndex, 1)
     },
     addAnswers () {
       var formIndex = this.currFIndex
