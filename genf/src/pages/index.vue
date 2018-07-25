@@ -128,6 +128,12 @@ export default {
       selectedTab: 'QDes',
       genQuIdCounter: 0,
       arrayGenQuId: [0],
+      trackingID: [
+        {
+          quesID: 0,
+          quesIndex: 0
+        }
+      ],
       nextQuIndex: 0,
       indexToShow: 0,
       currFIndex: 0,
@@ -186,6 +192,14 @@ export default {
           }
         ]
       })
+      var qObj = this.forms[fIndex].questions
+      // to get last index, need length of object as we always add to last index
+      var lengthOfQObj = Object.keys(qObj).length - 1
+      this.$q.notify('Final index in  questions: ' + lengthOfQObj)
+      this.trackingID.push({
+        quesID: this.genQuIdCounter,
+        quesIndex: lengthOfQObj
+      })
     },
     addAnswerChoices (fIndex, qIndex) {
       this.forms[fIndex].questions[qIndex].answerChoices.push({
@@ -195,15 +209,20 @@ export default {
       })
     },
     remRowQs (fIndex, qIndex) {
-      // var indexToRemoveFromArray = this.forms[fIndex].questions[qIndex].qId
-      // this.$q.notify('qId : ' + indexToRemoveFromArray)
+      // var indexToRemoveFromArray = this.forms[fIndex].trackingID
       this.forms[fIndex].questions.splice(qIndex, 1)
-      // Find index to remove from array of quIds.- indexToRemove
-      // This is used for validation when generating form to ensure form can't be generated if there is no valid next Qu ID
-      // var indexToRemove = this.arrayGenQuId.indexOf(qIndex + 1)
-      // if (indexToRemoveFromArray > -1) {
-      //   this.arrayGenQuId.splice(indexToRemoveFromArray, 1)
-      // }
+      // remove the selected index from the tracking Array
+      this.trackingID.splice(qIndex, 1)
+      // next, update the question index in the tracking array for those removed AFTER SPLICE
+      // to do this, 1. check length of tracking array
+      var lengthOfTrackerAfterSplice = Object.keys(this.trackingID).length
+      this.$q.notify('Length of Tracker: ' + lengthOfTrackerAfterSplice)
+      // 2. check if  q-index last.
+      if (qIndex >= lengthOfTrackerAfterSplice) {
+        this.$q.notify('we are at the end of the tracker')
+      } else if (qIndex < lengthOfTrackerAfterSplice) {
+      // 3. If NOT LAST, then from qIndex position till last, subtract 1 from values of quesIndex
+      }
     },
     remRowAns (fIndex, qIndex, aIndex) {
       this.forms[fIndex].questions[qIndex].answerChoices.splice(aIndex, 1)
