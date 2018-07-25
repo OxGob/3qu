@@ -222,6 +222,11 @@ export default {
         this.$q.notify('we are at the end of the tracker')
       } else if (qIndex < lengthOfTrackerAfterSplice) {
       // 3. If NOT LAST, then from qIndex position till last, subtract 1 from values of quesIndex
+        var i
+        for (i = qIndex; i < lengthOfTrackerAfterSplice; i++) {
+          var fn = this.trackingID[i].quesIndex - 1
+          this.trackingID[i].quesIndex = fn
+        }
       }
     },
     remRowAns (fIndex, qIndex, aIndex) {
