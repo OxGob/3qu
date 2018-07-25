@@ -192,14 +192,7 @@ export default {
           }
         ]
       })
-      var qObj = this.forms[fIndex].questions
-      // to get last index, need length of object as we always add to last index
-      var lengthOfQObj = Object.keys(qObj).length - 1
-      this.$q.notify('Final index in  questions: ' + lengthOfQObj)
-      this.trackingID.push({
-        quesID: this.genQuIdCounter,
-        quesIndex: lengthOfQObj
-      })
+      this.addTrackingId(fIndex)
     },
     addAnswerChoices (fIndex, qIndex) {
       this.forms[fIndex].questions[qIndex].answerChoices.push({
@@ -308,27 +301,38 @@ export default {
       // Generate the next question index. This is related to QU Index
       // Q.Index = QU ID - 1, Can't be negative
     },
-    posTest () {
-      var lenForm = Object.keys(this.forms).length
-      var iForm = ''
-      var jForm = ''
-      var aForm = ''
-      for (iForm = 0; iForm < lenForm; iForm++) {
-        this.$q.notify('Length of Form: ' + lenForm)
-        var lenQ = Object.keys(this.forms[iForm].questions).length
-        for (jForm = 0; jForm < lenQ; jForm++) {
-          this.$q.notify('Length of Qu: ' + lenQ)
-          // To get value for questions, set key to that of qtext which for now is 0. This works for all qs. change it to reflect question text once all is complete
-          var objQ = this.forms[iForm].questions[jForm]
-          this.$q.notify('OB Nu ' + lenQ + ': ' + objQ[Object.keys(objQ)[0]])
-          var lenA = Object.keys(this.forms[iForm].questions[jForm].answerChoices).length
-          for (aForm = 0; aForm < lenA; aForm++) {
-            this.$q.notify('Length of An: ' + lenA)
-            this.$q.notify('Val Ans ' + lenA + ': ' + Object.values(this.forms[iForm].questions[jForm].answerChoices[aForm]))
-          }
-        }
-      }
+    // Tracking Array Methods
+    addTrackingId (fIndex) {
+      var qObj = this.forms[fIndex].questions
+      // to get last index, need length of object as we always add to last index
+      var lastIndQObj = Object.keys(qObj).length - 1
+      this.$q.notify('Final index in  questions: ' + lastIndQObj)
+      this.trackingID.push({
+        quesID: this.genQuIdCounter,
+        quesIndex: lastIndQObj
+      })
     }
+    // posTest () {
+    //   var lenForm = Object.keys(this.forms).length
+    //   var iForm = ''
+    //   var jForm = ''
+    //   var aForm = ''
+    //   for (iForm = 0; iForm < lenForm; iForm++) {
+    //     this.$q.notify('Length of Form: ' + lenForm)
+    //     var lenQ = Object.keys(this.forms[iForm].questions).length
+    //     for (jForm = 0; jForm < lenQ; jForm++) {
+    //       this.$q.notify('Length of Qu: ' + lenQ)
+    //       // To get value for questions, set key to that of qtext which for now is 0. This works for all qs. change it to reflect question text once all is complete
+    //       var objQ = this.forms[iForm].questions[jForm]
+    //       this.$q.notify('OB Nu ' + lenQ + ': ' + objQ[Object.keys(objQ)[0]])
+    //       var lenA = Object.keys(this.forms[iForm].questions[jForm].answerChoices).length
+    //       for (aForm = 0; aForm < lenA; aForm++) {
+    //         this.$q.notify('Length of An: ' + lenA)
+    //         this.$q.notify('Val Ans ' + lenA + ': ' + Object.values(this.forms[iForm].questions[jForm].answerChoices[aForm]))
+    //       }
+    //     }
+    //   }
+    // }
   }
 }
 </script>
