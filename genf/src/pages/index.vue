@@ -90,6 +90,7 @@
                 </q-field>
                 <q-field class="q-ml-md q-mt-md q-mb-md" label="Question: " helper="Please read the question carefully." >
                   <q-input v-model="question.qtext" type="textarea" rows="6" align="center" readonly/>
+                  {{ question.qHelp }}
                 </q-field>
                 <q-card-separator class="q-mb-md q-mt-md"/>
           <!-- QDesPos - Answers -->
