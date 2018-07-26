@@ -25,7 +25,7 @@
            <div v-for="(question, qIndex) in form.questions" :key="question.id">
             <!-- <q-btn class="q-mb-md" round size="sm" color="amber" icon="add" @click="addRowQuestions(fIndex)" /> -->
             <q-btn class="q-mb-md q-ml-md" v-show="qIndex !==0" round size="sm" color="blue" icon="remove" @click="remRowQs(fIndex, qIndex)" />
-            <q-field class="q-mb-sm" label="Question ID: " helper="Please enter a the Question ID. This IS NOT displayed to the user and is for INTERNAL use only.">
+            <q-field class="q-mb-sm" label="Question ID: " helper="This Question ID is automatically generated. This IS NOT displayed to the user and is for INTERNAL use only.">
               <q-input v-model="question.qId" type="number" align="center" readonly />
             </q-field>
             <q-field class="q-mb-sm q-mt-md" label="Question Type: " helper="Please select a question type. This IS NOT displayed to the user and is for INTERNAL use only.">
@@ -37,14 +37,12 @@
             <q-field class="q-mb-sm" label="Help: " helper="Please enter a description for any helper label. This IS displayed to the user.">
               <q-input v-model="question.qHelp" type="text" align="center" clearable />
             </q-field>
-            <!-- <q-field class="q-mb-sm" label="Question ID: " helper="Please enter a the Question ID. This IS NOT displayed to the user and is for INTERNAL use only.">
-              <q-input v-model="question.qId" type="number" align="center" onkeypress="return event.charCode >= 48 && event.charCode <= 57" clearable />
-            </q-field> -->
              <q-field class="q-mb-sm" label="Default/Next Question ID: " helper="Please enter the next Question ID (a number) to proceed. To terminate the form, use the reserved keyword ENDFORM or leave the field blank. This IS NOT displayed to the user and is for INTERNAL use only.">
               <q-input v-model="question.nextDefaultId" type="text" align="center" clearable />
             </q-field>
             <q-card-separator class="q-mb-md q-mt-xl"/>
       <!-- QDes - Answers -->
+            <div  v-show="question.qType !== 'freetxt'">
               <div v-for="(answerChoice, aIndex) in question.answerChoices" :key="answerChoice.id">
                 <q-btn class="q-mb-md" round size="sm" color="green" icon="add" @click="addAnswerChoices(fIndex, qIndex)" />
                 <q-btn class="q-mb-md q-ml-md" v-show="aIndex !==0" round size="sm" color="negative" icon="remove" @click="remRowAns(fIndex, qIndex, aIndex)" />
@@ -59,6 +57,7 @@
                 </q-field>
             <q-card-separator class="q-mb-md q-mt-xl"/>
               </div>
+            </div>
            </div>
            </div>
             </q-card-main>
@@ -139,16 +138,16 @@ export default {
       ],
       quSelOptions: [
         {
-          label: 'Single choice',
-          value: 'single'
+          label: 'Freetext',
+          value: 'freetxt'
         },
         {
           label: 'Multiple choice',
           value: 'multi'
         },
         {
-          label: 'Freetext',
-          value: 'freetx'
+          label: 'Single choice',
+          value: 'single'
         }
       ],
       nextQuIndex: 0,
@@ -168,7 +167,7 @@ export default {
               qHelp: '',
               qId: 0, // integer
               nextDefaultId: '', // if empty or undefined or keyword, then complete form after this question
-              qType: '',
+              qType: 'freetxt',
               answerChoices: [
                 {
                   text: '',
