@@ -239,7 +239,7 @@ export default {
     // Navigation Methods
     generateForm () {
       this.selectedTab = 'QDesPos'
-      this.toggleButton()
+      // this.toggleButton()
       // this.posTest()
     },
     goBack () {
@@ -266,7 +266,7 @@ export default {
     goNext () {
       // To add answer Id navigation logic. depending on Default ID or answer ID navigate
       // input: next QID from current Q/Ans or Default ID || Output: navigation + add to answer object
-      // check next question Id from current answer ID --> related to current index via search in tacking index
+      // check next question Id from current answer ID --> related to current index via search in tracking index
       // var nextQId = this.forms[0].questions[0].answerChoices[0].nextQuId
       // this.$q.notify('Next Ans Id is : ' + nextQId)
       var formIndex = this.currFIndex
@@ -275,8 +275,8 @@ export default {
       this.currQIndex = this.forms[formIndex].questions[questionIndex].answerChoices[answerIndex].nextQuId
       // Show next Question
       this.indexToShow = this.currQIndex
-      this.toggleButton()
-      this.addAnswers()
+      // this.toggleButton()
+      // this.addAnswers()
     },
     finishForm () {
       // Button is showed only if keyword in Default ID
