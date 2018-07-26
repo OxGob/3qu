@@ -183,6 +183,20 @@ export default {
                   answerId: '', // e.g. y
                   nextQuId: '' // integer. If empty or undefined or keyword, then complete form after this question
                 }
+              ],
+              answerOptions: [
+                {
+                  label: '',
+                  value: ''
+                }
+              ],
+              genAnsIdCounter: 0,
+              arrayAnId: [0],
+              trackAnID: [
+                {
+                  ansID: 0,
+                  ansIndex: 0
+                }
               ]
             }
           ],
