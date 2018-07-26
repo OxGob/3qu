@@ -251,17 +251,8 @@ export default {
     },
     toggleButton () {
       // Depending on reserved keyword in question/answer, show/hide Next/Finish buttons
-      // input: Default Id
-      var formIndex = this.currFIndex
-      var answerIndex = this.currAIndex
-      var questionIndex = this.currQIndex
-      var keywordQu = this.forms[formIndex].questions[questionIndex].nextDefaultId.toUpperCase()
-      var keywordAn = this.forms[formIndex].questions[questionIndex].answerChoices[answerIndex].nextQuId
-      if (keywordQu === 'ENDFORM' || keywordQu === '' || keywordAn === '') {
-        this.$q.notify('KWord : ' + keywordQu)
-        this.showNextBtn = false
-        this.showFinishBtn = true
-      }
+      this.showNextBtn = false
+      this.showFinishBtn = true
     },
     goNext () {
       // To add answer Id navigation logic. depending on Default ID or answer ID navigate
@@ -272,10 +263,26 @@ export default {
       var formIndex = this.currFIndex
       var questionIndex = this.currQIndex
       var answerIndex = this.currAIndex
+      // Check for next quID in answerChoices or default Id of Question
+      // If answer choice is empty, go up and see whether parent ID is empty
       var nextQId = this.forms[formIndex].questions[questionIndex].answerChoices[answerIndex].nextQuId
+      if (nextQId === '') {
+        this.$q.notify('No next QID')
+        // Check if default ID is filled with integer
+        var keywordQu = this.forms[formIndex].questions[questionIndex].nextDefaultId.toUpperCase()
+        if (keywordQu === 'ENDFORM' || keywordQu === '') {
+          this.$q.notify('Enf form when answer is empty : ' + keywordQu)
+          // Call Finish function
+        } else {
+          nextQId = this.forms[formIndex].questions[questionIndex].nextDefaultId
+          this.$q.notify('Nxt Q ID 1 Def ID: ' + nextQId)
+          this.getQuIdIndex(parseInt(nextQId, 10))
+        }
+      } else {
       // Check in Question Tracking Array for the corresponding index
-      this.$q.notify('Nxt Q ID: ' + nextQId)
-      this.getQuIdIndex(nextQId)
+        this.$q.notify('Nxt Q ID2: ' + nextQId)
+        this.getQuIdIndex(nextQId)
+      }
       // Show next Question
       this.indexToShow = this.currQIndex
       // this.toggleButton()
@@ -284,11 +291,6 @@ export default {
     finishForm () {
       // Button is showed only if keyword in Default ID
       // Output: Saves to answer object. Closes form.
-    },
-    // Misc methods
-    timeStamp1 (date, locale) {
-      const event = (date === undefined) ? new Date() : new Date(date)
-      return event.toLocaleDateString(locale) + ' ' + event.toLocaleTimeString(locale)
     },
     // Tracking Array Methods
     addTrackingId (fIndex) {
@@ -309,6 +311,23 @@ export default {
         this.currQIndex = valIndexOfId
       } else if (typeof found === 'undefined') {
         // This means the index does not exist. See if this should trigger finish function
+      }
+    },
+    // Misc methods
+    timeStamp1 (date, locale) {
+      const event = (date === undefined) ? new Date() : new Date(date)
+      return event.toLocaleDateString(locale) + ' ' + event.toLocaleTimeString(locale)
+    },
+    checkDefId () {
+      // Depending on reserved keyword in question/answer, show/hide Next/Finish buttons
+      // input: Default Id
+      var formIndex = this.currFIndex
+      var answerIndex = this.currAIndex
+      var questionIndex = this.currQIndex
+      var keywordQu = this.forms[formIndex].questions[questionIndex].nextDefaultId.toUpperCase()
+      var keywordAn = this.forms[formIndex].questions[questionIndex].answerChoices[answerIndex].nextQuId
+      if (keywordQu === 'ENDFORM' || keywordQu === '' || keywordAn === '') {
+        this.$q.notify('KWord : ' + keywordQu)
       }
     }
     // posTest () {
