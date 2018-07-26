@@ -42,7 +42,7 @@
             </q-field>
             <q-card-separator class="q-mb-md q-mt-xl"/>
       <!-- QDes - Answers -->
-            <div  v-show="question.qType !== 'freetxt'">
+            <div  v-show="question.qType !== 'freetext'">
               <div v-for="(answerChoice, aIndex) in question.answerChoices" :key="answerChoice.id">
                 <q-btn class="q-mb-md" round size="sm" color="green" icon="add" @click="addAnswerChoices(fIndex, qIndex)" />
                 <q-btn class="q-mb-md q-ml-md" v-show="aIndex !==0" round size="sm" color="negative" icon="remove" @click="remRowAns(fIndex, qIndex, aIndex)" />
@@ -97,10 +97,19 @@
                 <q-card-separator class="q-mb-md q-mt-md"/>
           <!-- QDesPos - Answers -->
                   <q-card class="bg-green-2 q-ml-md q-mt-lg q-mb-md q-mr-md">
-                  <div v-for="(answerChoice) in question.answerChoices" :key="answerChoice.id">
-                    <q-field class="q-ml-md q-mt-md q-mb-md" label="Answer: " >
-                      <q-input class="q-mb-md" v-model="answerChoice.text" align="center" onkeypress="return event.charCode >= 48 && event.charCode <= 57" clearable/>
-                    </q-field>
+                  <div  v-show="question.qType !== 'freetext'">
+                    <div v-for="(answerChoice) in question.answerChoices" :key="answerChoice.id">
+                      <q-field class="q-ml-md q-mt-md q-mb-md" label="Answer: " >
+                        <q-input class="q-mb-md" v-model="answerChoice.text" align="center" onkeypress="return event.charCode >= 48 && event.charCode <= 57" clearable/>
+                      </q-field>
+                    </div>
+                  </div>
+                  <div  v-show="question.qType === 'freetext'">
+                    <div v-for="(answer) in form.answers" :key="answer.id">
+                      <q-field class="q-ml-md q-mt-md q-mb-md" label="Answer: " helper="Please write an answer." >
+                        <q-input class="q-mb-md" v-model="answer.answerText" align="center" type="textarea" rows="6" clearable/>
+                      </q-field>
+                    </div>
                   </div>
                   </q-card>
                   <div  v-show="showNextBtn">
@@ -139,7 +148,7 @@ export default {
       quSelOptions: [
         {
           label: 'Freetext',
-          value: 'freetxt'
+          value: 'freetext'
         },
         {
           label: 'Multiple choice',
@@ -167,7 +176,7 @@ export default {
               qHelp: '',
               qId: 0, // integer
               nextDefaultId: '', // if empty or undefined or keyword, then complete form after this question
-              qType: 'freetxt',
+              qType: 'freetext',
               answerChoices: [
                 {
                   text: '',
