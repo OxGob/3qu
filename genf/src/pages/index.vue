@@ -270,9 +270,12 @@ export default {
       // var nextQId = this.forms[0].questions[0].answerChoices[0].nextQuId
       // this.$q.notify('Next Ans Id is : ' + nextQId)
       var formIndex = this.currFIndex
-      var answerIndex = this.currAIndex
       var questionIndex = this.currQIndex
-      this.currQIndex = this.forms[formIndex].questions[questionIndex].answerChoices[answerIndex].nextQuId
+      var answerIndex = this.currAIndex
+      var nextQId = this.forms[formIndex].questions[questionIndex].answerChoices[answerIndex].nextQuId
+      // Check in Question Tracking Array for the corresponding index
+      this.$q.notify('Nxt Q ID: ' + nextQId)
+      this.getQuIdIndex(nextQId)
       // Show next Question
       this.indexToShow = this.currQIndex
       // this.toggleButton()
@@ -287,14 +290,6 @@ export default {
       const event = (date === undefined) ? new Date() : new Date(date)
       return event.toLocaleDateString(locale) + ' ' + event.toLocaleTimeString(locale)
     },
-    generateQuId () {
-      // Generate the question ID. This is related to QU Index
-      // QU ID = Q.Index + 1
-    },
-    generateNextQuIndex () {
-      // Generate the next question index. This is related to QU Index
-      // Q.Index = QU ID - 1, Can't be negative
-    },
     // Tracking Array Methods
     addTrackingId (fIndex) {
       var qObj = this.forms[fIndex].questions
@@ -305,6 +300,16 @@ export default {
         quesID: this.genQuIdCounter,
         quesIndex: lastIndexQObj
       })
+    },
+    getQuIdIndex (nextQId) {
+      var found = this.trackingID.find(track => track.quesID === nextQId)
+      if (typeof found !== 'undefined') {
+        const valIndexOfId = found.quesIndex
+        this.$q.notify('Value of Index: ' + valIndexOfId)
+        this.currQIndex = valIndexOfId
+      } else if (typeof found === 'undefined') {
+        // This means the index does not exist. See if this should trigger finish function
+      }
     }
     // posTest () {
     //   var lenForm = Object.keys(this.forms).length
