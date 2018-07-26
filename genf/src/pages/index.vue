@@ -37,7 +37,7 @@
             <!-- <q-field class="q-mb-sm" label="Question ID: " helper="Please enter a the Question ID. This IS NOT displayed to the user and is for INTERNAL use only.">
               <q-input v-model="question.qId" type="number" align="center" onkeypress="return event.charCode >= 48 && event.charCode <= 57" clearable />
             </q-field> -->
-             <q-field class="q-mb-sm" label="Default ID: " helper="Please enter the next Question ID (a number) to proceed. To terminate the form, use the reserved keyword ENDFORM or leave the field blank. This IS NOT displayed to the user and is for INTERNAL use only.">
+             <q-field class="q-mb-sm" label="Default/Next Question ID: " helper="Please enter the next Question ID (a number) to proceed. To terminate the form, use the reserved keyword ENDFORM or leave the field blank. This IS NOT displayed to the user and is for INTERNAL use only.">
               <q-input v-model="question.nextDefaultId" type="text" align="center" clearable />
             </q-field>
             <q-card-separator class="q-mb-md q-mt-xl"/>
@@ -202,19 +202,13 @@ export default {
       })
     },
     remRowQs (fIndex, qIndex) {
-      // var indexToRemoveFromArray = this.forms[fIndex].trackingID
       this.forms[fIndex].questions.splice(qIndex, 1)
-      // remove the selected index from the tracking Array
+      // remove the selected index from the question tracking Array
       this.trackingID.splice(qIndex, 1)
-      // next, update the question index in the tracking array for those removed AFTER SPLICE
-      // to do this, 1. check length of tracking array
+      // In the tracking array, update the question index for those removed AFTER SPLICE
       var lengthOfTrackerAfterSplice = Object.keys(this.trackingID).length
-      this.$q.notify('Length of Tracker: ' + lengthOfTrackerAfterSplice)
-      // 2. check if  q-index last.
-      if (qIndex >= lengthOfTrackerAfterSplice) {
-        this.$q.notify('we are at the end of the tracker')
-      } else if (qIndex < lengthOfTrackerAfterSplice) {
-      // 3. If NOT LAST, then from qIndex position till last, subtract 1 from values of quesIndex
+      if (qIndex < lengthOfTrackerAfterSplice) {
+      // If qIndex is NOT LAST, then from qIndex position till last, subtract 1 from values of quesIndex
         var i
         for (i = qIndex; i < lengthOfTrackerAfterSplice; i++) {
           var fn = this.trackingID[i].quesIndex - 1
@@ -271,8 +265,8 @@ export default {
     },
     goNext () {
       // To add answer Id navigation logic. depending on Default ID or answer ID navigate
-      // input: next QID from current Q/Ans || Output: navigation + add to answer object(?)
-      // check next question Id from current answer ID --> related to current index
+      // input: next QID from current Q/Ans or Default ID || Output: navigation + add to answer object
+      // check next question Id from current answer ID --> related to current index via search in tacking index
       // var nextQId = this.forms[0].questions[0].answerChoices[0].nextQuId
       // this.$q.notify('Next Ans Id is : ' + nextQId)
       var formIndex = this.currFIndex
@@ -305,11 +299,11 @@ export default {
     addTrackingId (fIndex) {
       var qObj = this.forms[fIndex].questions
       // to get last index, need length of object as we always add to last index
-      var lastIndQObj = Object.keys(qObj).length - 1
-      this.$q.notify('Final index in  questions: ' + lastIndQObj)
+      var lastIndexQObj = Object.keys(qObj).length - 1
+      // this.$q.notify('Final index in  questions: ' + lastIndexQObj)
       this.trackingID.push({
         quesID: this.genQuIdCounter,
-        quesIndex: lastIndQObj
+        quesIndex: lastIndexQObj
       })
     }
     // posTest () {
