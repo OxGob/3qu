@@ -28,6 +28,9 @@
             <q-field class="q-mb-sm" label="Question ID: " helper="Please enter a the Question ID. This IS NOT displayed to the user and is for INTERNAL use only.">
               <q-input v-model="question.qId" type="number" align="center" readonly />
             </q-field>
+            <q-field class="q-mb-sm q-mt-md" label="Question Type: " helper="Please select a question type. This IS NOT displayed to the user and is for INTERNAL use only.">
+              <q-select v-model="question.qType" :options="quSelOptions" />
+            </q-field>
             <q-field class="q-mb-sm" label="Question: " helper="Please enter a question. This IS displayed to the user.">
               <q-input v-model="question.qtext" type="textarea" rows="6" align="center" clearable />
             </q-field>
@@ -134,6 +137,20 @@ export default {
           quesIndex: 0
         }
       ],
+      quSelOptions: [
+        {
+          label: 'Single choice',
+          value: 'single'
+        },
+        {
+          label: 'Multiple choice',
+          value: 'multi'
+        },
+        {
+          label: 'Freetext',
+          value: 'freetx'
+        }
+      ],
       nextQuIndex: 0,
       indexToShow: 0,
       currFIndex: 0,
@@ -151,7 +168,7 @@ export default {
               qHelp: '',
               qId: 0, // integer
               nextDefaultId: '', // if empty or undefined or keyword, then complete form after this question
-              questionType: '',
+              qType: '',
               answerChoices: [
                 {
                   text: '',
@@ -183,7 +200,7 @@ export default {
         qHelp: '',
         qId: this.genQuIdCounter,
         nextDefaultId: '',
-        questionType: '',
+        qType: '',
         answerChoices: [
           {
             text: '',
