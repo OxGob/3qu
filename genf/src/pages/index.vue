@@ -255,28 +255,30 @@ export default {
       this.showFinishBtn = true
     },
     goNext () {
-      // To add answer Id navigation logic. depending on Default ID or answer ID navigate
+      // Navigation logic. depending on Default ID or answer ID
       // input: next QID from current Q/Ans or Default ID || Output: navigation + add to answer object
       // check next question Id from current answer ID --> related to current index via search in tracking index
-      // var nextQId = this.forms[0].questions[0].answerChoices[0].nextQuId
-      // this.$q.notify('Next Ans Id is : ' + nextQId)
       var formIndex = this.currFIndex
       var questionIndex = this.currQIndex
       var answerIndex = this.currAIndex
-      // Check for next quID in answerChoices or default Id of Question
-      // If answer choice is empty, go up and see whether parent ID is empty
+      // Check for next quID in answerChoices or default Id of Question. If answer choice is empty, go up and see whether parent ID is empty
       var nextQId = this.forms[formIndex].questions[questionIndex].answerChoices[answerIndex].nextQuId
       if (nextQId === '') {
         this.$q.notify('No next QID')
         // Check if default ID is filled with integer
         var keywordQu = this.forms[formIndex].questions[questionIndex].nextDefaultId.toUpperCase()
         if (keywordQu === 'ENDFORM' || keywordQu === '') {
-          this.$q.notify('Enf form when answer is empty : ' + keywordQu)
+          this.$q.notify('End form when answer is empty : ' + keywordQu)
           // Call Finish function
         } else {
           nextQId = this.forms[formIndex].questions[questionIndex].nextDefaultId
           this.$q.notify('Nxt Q ID 1 Def ID: ' + nextQId)
-          this.getQuIdIndex(parseInt(nextQId, 10))
+          var isnum = /^[0-9]+$/.test(nextQId)
+          if (isnum === true) {
+            this.getQuIdIndex(parseInt(nextQId, 10))
+          } else {
+            // Call Finish method
+          }
         }
       } else {
       // Check in Question Tracking Array for the corresponding index
@@ -330,27 +332,6 @@ export default {
         this.$q.notify('KWord : ' + keywordQu)
       }
     }
-    // posTest () {
-    //   var lenForm = Object.keys(this.forms).length
-    //   var iForm = ''
-    //   var jForm = ''
-    //   var aForm = ''
-    //   for (iForm = 0; iForm < lenForm; iForm++) {
-    //     this.$q.notify('Length of Form: ' + lenForm)
-    //     var lenQ = Object.keys(this.forms[iForm].questions).length
-    //     for (jForm = 0; jForm < lenQ; jForm++) {
-    //       this.$q.notify('Length of Qu: ' + lenQ)
-    //       // To get value for questions, set key to that of qtext which for now is 0. This works for all qs. change it to reflect question text once all is complete
-    //       var objQ = this.forms[iForm].questions[jForm]
-    //       this.$q.notify('OB Nu ' + lenQ + ': ' + objQ[Object.keys(objQ)[0]])
-    //       var lenA = Object.keys(this.forms[iForm].questions[jForm].answerChoices).length
-    //       for (aForm = 0; aForm < lenA; aForm++) {
-    //         this.$q.notify('Length of An: ' + lenA)
-    //         this.$q.notify('Val Ans ' + lenA + ': ' + Object.values(this.forms[iForm].questions[jForm].answerChoices[aForm]))
-    //       }
-    //     }
-    //   }
-    // }
   }
 }
 </script>
