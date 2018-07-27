@@ -204,7 +204,7 @@ export default {
                   ansIndex: 0
                 }
               ],
-              genAnsIdCounter: 1
+              genAnsIdCounter: 0
             }
           ],
           answers: [
@@ -243,18 +243,25 @@ export default {
             value: ''
           }
         ],
-        genAnsIdCounter: 1
+        ansTrackingID: [
+          {
+            ansID: 0,
+            ansIndex: 0
+          }
+        ],
+        genAnsIdCounter: 0
       })
-      this.addTrackingId(fIndex)
+      this.addTrackQuId(fIndex)
     },
     addAnswerChoices (fIndex, qIndex) {
-      var newAnId = this.forms[fIndex].questions[qIndex].genAnsIdCounter++
+      this.forms[fIndex].questions[qIndex].genAnsIdCounter++
       this.forms[fIndex].questions[qIndex].answerChoices.push({
-        answerId: newAnId,
+        answerId: this.forms[fIndex].questions[qIndex].genAnsIdCounter,
         text: '',
         answerValue: '', // e.g. y
         nextQuId: ''
       })
+      this.addTrackAnsId(fIndex, qIndex)
     },
     remRowQs (fIndex, qIndex) {
       this.forms[fIndex].questions.splice(qIndex, 1)
@@ -272,7 +279,20 @@ export default {
       }
     },
     remRowAns (fIndex, qIndex, aIndex) {
-      this.forms[fIndex].questions[qIndex].answerChoices.splice(aIndex, 1)
+      var pos = this.forms[fIndex].questions[qIndex]
+      pos.answerChoices.splice(aIndex, 1)
+      // remove the selected index from the answer tracking Array
+      pos.ansTrackingID.splice(aIndex, 1)
+      // In the tracking array, update the question index for those removed AFTER SPLICE
+      var lengthOfTrackerAfterSplice = Object.keys(pos.ansTrackingID).length
+      if (aIndex < lengthOfTrackerAfterSplice) {
+      // If aIndex is NOT LAST, then from aIndex position till last, subtract 1 from values of ansIndex
+        var i
+        for (i = aIndex; i < lengthOfTrackerAfterSplice; i++) {
+          var fn = pos.ansTrackingID[i].ansIndex - 1
+          pos.ansTrackingID[i].ansIndex = fn
+        }
+      }
     },
     addAnswers () {
       var formIndex = this.currFIndex
@@ -352,7 +372,7 @@ export default {
       // Output: Saves to answer object. Closes form.
     },
     // Tracking Array Methods
-    addTrackingId (fIndex) {
+    addTrackQuId (fIndex) {
       var qObj = this.forms[fIndex].questions
       // to get last index, need length of object as we always add to last index
       var lastIndexQObj = Object.keys(qObj).length - 1
@@ -362,11 +382,21 @@ export default {
         quesIndex: lastIndexQObj
       })
     },
+    addTrackAnsId (fIndex, qIndex) {
+      var aObj = this.forms[fIndex].questions[qIndex].answerChoices
+      // to get last index, need length of object as we always add to last index
+      var lastIndexAObj = Object.keys(aObj).length - 1
+      // this.$q.notify('Final index in  questions: ' + lastIndexQObj)
+      this.forms[fIndex].questions[qIndex].ansTrackingID.push({
+        ansID: this.forms[fIndex].questions[qIndex].genAnsIdCounter,
+        ansIndex: lastIndexAObj
+      })
+    },
     getQuIdIndex (nextQId) {
       var found = this.trackingID.find(track => track.quesID === nextQId)
       if (typeof found !== 'undefined') {
         const valIndexOfId = found.quesIndex
-        this.$q.notify('Value of Index: ' + valIndexOfId)
+        // this.$q.notify('Value of Index: ' + valIndexOfId)
         this.currQIndex = valIndexOfId
       } else if (typeof found === 'undefined') {
         // This means the index does not exist. See if this should trigger finish function
