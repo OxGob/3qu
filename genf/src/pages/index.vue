@@ -181,8 +181,9 @@ export default {
               qType: 'freetext',
               answerChoices: [
                 {
+                  answerId: 0,
                   text: '',
-                  answerId: '', // e.g. y
+                  answerValue: '', // e.g. y
                   nextQuId: '' // integer. If empty or undefined or keyword, then complete form after this question
                 }
               ],
@@ -192,14 +193,7 @@ export default {
                   value: ''
                 }
               ],
-              genAnsIdCounter: 0,
-              arrayAnId: [0],
-              trackAnID: [
-                {
-                  ansID: 0,
-                  ansIndex: 0
-                }
-              ]
+              genAnsIdCounter: 0
             }
           ],
           answers: [
@@ -227,11 +221,19 @@ export default {
         qType: 'freetext',
         answerChoices: [
           {
+            answerId: 0,
             text: '',
-            answerId: '',
-            nextQuId: ''
+            answerValue: '', // e.g. y
+            nextQuId: '' // integer. If empty or undefined or keyword, then complete form after this question
           }
-        ]
+        ],
+        answerOptions: [
+          {
+            label: '',
+            value: ''
+          }
+        ],
+        genAnsIdCounter: 0
       })
       this.addTrackingId(fIndex)
     },
