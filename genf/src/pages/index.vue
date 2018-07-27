@@ -296,7 +296,7 @@ export default {
     },
     addAnswers () {
       var formIndex = this.currFIndex
-      this.$q.notify('the form index is: ' + formIndex)
+      // this.$q.notify('the form index is: ' + formIndex)
       var questionIndex = this.currQIndex
       var answerIndex = this.currAIndex
       // To fill in respective answers for each form, use index of questions
@@ -310,6 +310,10 @@ export default {
         answerId: '',
         timeStamp: ''
       })
+    },
+    addAnswerOptions () {
+      // Select options to be displayed for radio button
+      // var formIndex = this.currFIndex
     },
     // Navigation Methods
     generateForm () {
