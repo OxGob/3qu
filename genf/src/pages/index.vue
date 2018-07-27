@@ -20,7 +20,7 @@
               <q-field class="q-mb-sm" label="Form Description: " helper="Please enter a description for the form. This IS displayed to the user.">
                 <q-input v-model="form.fDescription" type="textarea" rows="5" align="center" clearable />
               </q-field>
-              <q-btn class="q-mt-sm" label="Add Questions" color="blue" icon="add" @click="addRowQuestions(fIndex)" />
+              <q-btn class="q-mt-sm" label="Add More Questions" color="blue" icon="add" @click="addRowQuestions(fIndex)" />
               <q-card-separator class="q-mb-md q-mt-xl"/>
       <!-- QDes - Questions -->
            <div v-for="(question, qIndex) in form.questions" :key="question.id">
@@ -41,17 +41,23 @@
              <q-field class="q-mb-sm" label="Default/Next Question ID: " helper="Please enter the next Question ID (a number) to proceed. To terminate the form, use the reserved keyword ENDFORM or leave the field blank. This IS NOT displayed to the user and is for INTERNAL use only.">
               <q-input v-model="question.nextDefaultId" type="text" align="center" clearable />
             </q-field>
+            <div  v-show="question.qType !== 'freetext'">
+            <q-btn class="q-mt-sm" color="green" label="Add More Answers" icon="add" @click="addAnswerChoices(fIndex, qIndex)" />
+            </div>
             <q-card-separator class="q-mb-md q-mt-xl"/>
       <!-- QDes - Answers -->
             <div  v-show="question.qType !== 'freetext'">
               <div v-for="(answerChoice, aIndex) in question.answerChoices" :key="answerChoice.id">
-                <q-btn class="q-mb-md" round size="sm" color="green" icon="add" @click="addAnswerChoices(fIndex, qIndex)" />
+                <!-- <q-btn class="q-mb-md" round size="sm" color="green" icon="add" @click="addAnswerChoices(fIndex, qIndex, aIndex)" /> -->
                 <q-btn class="q-mb-md q-ml-md" v-show="aIndex !==0" round size="sm" color="negative" icon="remove" @click="remRowAns(fIndex, qIndex, aIndex)" />
-                <q-field class="q-mb-sm" label="Answer Text: " helper="Please enter the answer. e.g. Yes or No. This IS displayed to the user.">
+                <q-field class="q-mb-sm" label="Answer ID: " helper="This Answer ID is automatically generated. This IS NOT displayed to the user and is for INTERNAL use only.." >
+                  <q-input v-model="answerChoice.answerId" type="number" align="center" readonly />
+                </q-field>
+                <q-field class="q-mb-sm" label="Answer Text: " helper="Please enter the answer text. e.g. Yes or No. This IS displayed to the user.">
                   <q-input v-model="answerChoice.text" type="text" align="center" clearable />
                 </q-field>
-                 <q-field class="q-mb-sm" label="Answer ID: " helper="Please enter the answer ID. This IS NOT displayed to the user and is for INTERNAL use only." >
-                  <q-input v-model="answerChoice.answerId" type="number" align="center" onkeypress="return event.charCode >= 48 && event.charCode <= 57" clearable />
+                 <q-field class="q-mb-sm" label="Answer Value: " helper="Please enter the answer value. This IS NOT displayed to the user and is for INTERNAL use only." >
+                  <q-input v-model="answerChoice.answerValue" type="number" align="center" onkeypress="return event.charCode >= 48 && event.charCode <= 57" clearable />
                 </q-field>
                 <q-field class="q-mb-sm" label="Next Question ID: " helper="Please enter the next Question ID (a number) to proceed. To terminate the form, leave the field blank. This IS NOT displayed to the user and is for INTERNAL use only." >
                   <q-input v-model="answerChoice.nextQuId" type="number" align="center" onkeypress="return event.charCode >= 48 && event.charCode <= 57" clearable />
@@ -193,7 +199,7 @@ export default {
                   value: ''
                 }
               ],
-              genAnsIdCounter: 0
+              genAnsIdCounter: 1
             }
           ],
           answers: [
@@ -238,9 +244,11 @@ export default {
       this.addTrackingId(fIndex)
     },
     addAnswerChoices (fIndex, qIndex) {
+      var newAnId = this.forms[fIndex].questions[qIndex].genAnsIdCounter++
       this.forms[fIndex].questions[qIndex].answerChoices.push({
+        answerId: newAnId,
         text: '',
-        answerId: '',
+        answerValue: '', // e.g. y
         nextQuId: ''
       })
     },
