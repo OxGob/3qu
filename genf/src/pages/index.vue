@@ -9,6 +9,7 @@
             <q-card-title>Form Designer - New Model
               <span slot="subtitle">Design the form. Create the questions. Shape the flow with follow-up questions by ordering as desired.</span>
             </q-card-title>
+            <q-btn class="q-ml-md" color="amber"  label="Start Again" @click="refreshPage"/>
             <q-card-separator class="q-mb-md q-mt-xl"/>
             <q-card-main>
       <!-- QDes - Forms  -->
@@ -17,14 +18,14 @@
                 <q-input v-model="form.fname" type="text" align="center" clearable />
               </q-field>
               <q-field class="q-mb-sm" label="Form Description: " helper="Please enter a description for the form. This IS displayed to the user.">
-                <q-input v-model="form.fDescription" type="text" align="center" clearable />
+                <q-input v-model="form.fDescription" type="textarea" rows="5" align="center" clearable />
               </q-field>
-              <q-btn class="q-mt-sm" label="Add Questions" color="amber" icon="add" @click="addRowQuestions(fIndex)" />
+              <q-btn class="q-mt-sm" label="Add Questions" color="blue" icon="add" @click="addRowQuestions(fIndex)" />
               <q-card-separator class="q-mb-md q-mt-xl"/>
       <!-- QDes - Questions -->
            <div v-for="(question, qIndex) in form.questions" :key="question.id">
             <!-- <q-btn class="q-mb-md" round size="sm" color="amber" icon="add" @click="addRowQuestions(fIndex)" /> -->
-            <q-btn class="q-mb-md q-ml-md" v-show="qIndex !==0" round size="sm" color="blue" icon="remove" @click="remRowQs(fIndex, qIndex)" />
+            <q-btn class="q-mb-md q-ml-md" v-show="qIndex !==0" round size="sm" color="red-3" icon="remove" @click="remRowQs(fIndex, qIndex)" />
             <q-field class="q-mb-sm" label="Question ID: " helper="This Question ID is automatically generated. This IS NOT displayed to the user and is for INTERNAL use only.">
               <q-input v-model="question.qId" type="number" align="center" readonly />
             </q-field>
@@ -358,6 +359,9 @@ export default {
       }
     },
     // Misc methods
+    refreshPage () {
+      location.reload(true)
+    },
     timeStamp1 (date, locale) {
       const event = (date === undefined) ? new Date() : new Date(date)
       return event.toLocaleDateString(locale) + ' ' + event.toLocaleTimeString(locale)
