@@ -50,7 +50,7 @@
               <div v-for="(answerChoice, aIndex) in question.answerChoices" :key="answerChoice.id">
                 <!-- <q-btn class="q-mb-md" round size="sm" color="green" icon="add" @click="addAnswerChoices(fIndex, qIndex, aIndex)" /> -->
                 <q-btn class="q-mb-md q-ml-md" v-show="aIndex !==0" round size="sm" color="green-3" icon="remove" @click="remRowAns(fIndex, qIndex, aIndex)" />
-                <q-field class="q-mb-sm" label="Answer ID: " helper="This Answer ID is automatically generated. This IS NOT displayed to the user and is for INTERNAL use only.." >
+                <q-field class="q-mb-sm" label="Answer Label: " helper="This Answer ID is automatically generated. This IS NOT displayed to the user and is for INTERNAL use only.." >
                   <q-input v-model="answerChoice.answerId" type="number" align="center" readonly />
                 </q-field>
                 <q-field class="q-mb-sm" label="Answer Text: " helper="Please enter the answer text. e.g. Yes or No. This IS displayed to the user.">
@@ -97,17 +97,16 @@
                 <q-field class="q-ml-md q-mt-md q-mb-md" label="Question Number: " >
                   <q-input v-model="question.qId" align="center" readonly/>
                 </q-field>
-                <q-field class="q-ml-md q-mt-md q-mb-md" label="Question: " helper="Please read the question carefully." >
+                <q-field class="q-ml-md q-mt-md q-mb-md" label="Question: " :helper="question.qHelp" >
                   <q-input v-model="question.qtext" type="textarea" rows="6" align="center" readonly/>
-                  {{ question.qHelp }}
                 </q-field>
                 <q-card-separator class="q-mb-md q-mt-md"/>
           <!-- QDesPos - Answers -->
                   <q-card class="bg-green-2 q-ml-md q-mt-lg q-mb-md q-mr-md">
-                  <div  v-show="question.qType !== 'freetext'">
+                  <div  v-show="question.qType === 'single'">
                     <div v-for="(answerChoice) in question.answerChoices" :key="answerChoice.id">
                       <q-field class="q-ml-md q-mt-md q-mb-md" label="Answer: " >
-                        <q-input class="q-mb-md" v-model="answerChoice.text" align="center" onkeypress="return event.charCode >= 48 && event.charCode <= 57" clearable/>
+                        <q-radio class="q-mb-md" :val="answerChoice.answerId" :label=" answerChoice.text"/>
                       </q-field>
                     </div>
                   </div>
@@ -183,7 +182,7 @@ export default {
               qHelp: '',
               qId: 0, // integer
               nextDefaultId: '', // if empty or undefined or keyword, then complete form after this question
-              qType: 'freetext',
+              qType: 'single',
               answerChoices: [
                 {
                   answerId: 0,
@@ -348,11 +347,13 @@ export default {
         this.$q.notify('No next QID')
         // Check if default ID is filled with integer
         var keywordQu = this.forms[formIndex].questions[questionIndex].nextDefaultId.toUpperCase()
-        if (keywordQu === 'ENDFORM' || keywordQu === '') {
+        if (keywordQu === 'ENDFORM' || keywordQu === '-1') {
           this.$q.notify('End form when answer is empty : ' + keywordQu)
           // Call Finish function
         } else {
           nextQId = this.forms[formIndex].questions[questionIndex].nextDefaultId
+          // if nextQId is empty, this function returns the next available question (followin the order of the array)
+          // Something on the line of: nextQId = this.forms[formIndex].questions[questionIndex+1]
           this.$q.notify('Nxt Q ID 1 Def ID: ' + nextQId)
           var isnum = /^[0-9]+$/.test(nextQId)
           if (isnum === true) {
@@ -396,6 +397,8 @@ export default {
         ansIndex: lastIndexAObj
       })
     },
+
+    // This function gets the next Question ID to display
     getQuIdIndex (nextQId) {
       var found = this.trackingID.find(track => track.quesID === nextQId)
       if (typeof found !== 'undefined') {
