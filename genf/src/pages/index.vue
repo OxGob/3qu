@@ -49,7 +49,7 @@
             <div  v-show="question.qType !== 'freetext'">
               <div v-for="(answerChoice, aIndex) in question.answerChoices" :key="answerChoice.id">
                 <!-- <q-btn class="q-mb-md" round size="sm" color="green" icon="add" @click="addAnswerChoices(fIndex, qIndex, aIndex)" /> -->
-                <q-btn class="q-mb-md q-ml-md" v-show="aIndex !==0" round size="sm" color="negative" icon="remove" @click="remRowAns(fIndex, qIndex, aIndex)" />
+                <q-btn class="q-mb-md q-ml-md" v-show="aIndex !==0" round size="sm" color="green-3" icon="remove" @click="remRowAns(fIndex, qIndex, aIndex)" />
                 <q-field class="q-mb-sm" label="Answer ID: " helper="This Answer ID is automatically generated. This IS NOT displayed to the user and is for INTERNAL use only.." >
                   <q-input v-model="answerChoice.answerId" type="number" align="center" readonly />
                 </q-field>
@@ -146,7 +146,6 @@ export default {
       selectedTab: 'QDes',
       tabWasLoaded: false,
       genQuIdCounter: 0,
-      arrayGenQuId: [0],
       trackingID: [
         {
           quesID: 0,
@@ -224,7 +223,6 @@ export default {
     // Add Remove
     addRowQuestions (fIndex) {
       this.genQuIdCounter++
-      this.arrayGenQuId.push(this.genQuIdCounter)
       this.forms[fIndex].questions.push({
         qtext: '',
         qHelp: '',
