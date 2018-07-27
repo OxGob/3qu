@@ -53,8 +53,8 @@
               <div v-for="(answerChoice, aIndex) in question.answerChoices" :key="answerChoice.id">
                 <!-- <q-btn class="q-mb-md" round size="sm" color="green" icon="add" @click="addAnswerChoices(fIndex, qIndex, aIndex)" /> -->
                 <q-btn class="q-mb-md q-ml-md" v-show="aIndex !==0" color="green-3" icon="remove" label="Remove this answer" @click="remRowAns(fIndex, qIndex, aIndex)" />
-                <q-field class="q-mb-sm q-ml-sm" label="Answer Label: " helper="This Answer ID is automatically generated. This IS NOT displayed to the user and is for INTERNAL use only.." >
-                  <q-input v-model="answerChoice.answerId" type="number" align="center" readonly />
+                <q-field class="q-mb-sm q-ml-sm" label="Answer Label: " helper="This Answer label is editable. This IS NOT displayed to the user and is for INTERNAL use only.." >
+                  <q-input v-model="answerChoice.answerId" type="number" align="center" clearable/>
                 </q-field>
                 <q-field class="q-mb-sm q-ml-sm" label="Answer Text: " helper="Please enter the answer text. e.g. Yes or No. This IS displayed to the user.">
                   <q-input v-model="answerChoice.text" type="text" align="center" clearable />
@@ -170,7 +170,6 @@ export default {
           value: 'single'
         }
       ],
-      nextQuIndex: 0,
       indexToShow: 0,
       currFIndex: 0,
       currQIndex: 0,
