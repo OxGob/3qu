@@ -2,7 +2,7 @@
   <q-page>
     <q-tabs color="secondary" glossy align="justify" v-model="selectedTab">
         <q-tab slot="title" default name="QDes" icon="subject" label="QDesign"/>
-        <q-tab slot="title" name="QDesPos" icon="subject" label="QDesignPost"/>
+        <q-tab slot="title" v-if="tabWasLoaded" name="QDesPos" icon="subject" label="QDesignPost"/>
       <!-- QDes Tab -->
         <q-tab-pane name="QDes">
           <q-card class="bg-cyan-2 q-ma-xl">
@@ -137,6 +137,7 @@ export default {
   data () {
     return {
       selectedTab: 'QDes',
+      tabWasLoaded: false,
       genQuIdCounter: 0,
       arrayGenQuId: [0],
       trackingID: [
@@ -222,7 +223,7 @@ export default {
         qHelp: '',
         qId: this.genQuIdCounter,
         nextDefaultId: '',
-        qType: '',
+        qType: 'freetext',
         answerChoices: [
           {
             text: '',
@@ -278,11 +279,13 @@ export default {
     // Navigation Methods
     generateForm () {
       this.selectedTab = 'QDesPos'
+      this.tabWasLoaded = true
+      this.indexToShow = 0
       // this.toggleButton()
-      // this.posTest()
     },
     goBack () {
       this.selectedTab = 'QDes'
+      this.tabWasLoaded = false
     },
     showQu () {
       // Show only Q and A according to relevant qID
