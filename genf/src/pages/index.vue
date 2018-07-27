@@ -109,10 +109,9 @@
           <!-- QDesPos - Answers -->
                   <q-card class="bg-green-2 q-ml-md q-mt-lg q-mb-md q-mr-md">
                   <div  v-show="question.qType === 'single'">
+                    <q-field class="q-ml-md q-mt-md q-mb-md" label="Select one please: " />
                     <div v-for="(answerChoice) in question.answerChoices" :key="answerChoice.id">
-                      <q-field class="q-ml-md q-mt-md q-mb-md" label="Select one please: " />
-                        <q-radio class="q-ml-md q-mb-md" :val="answerChoice.answerId" :label=" answerChoice.text"/>
-                      <!-- </q-field> -->
+                        <q-radio class="q-ml-md q-mb-md" v-model="ansRadio" :val="answerChoice.answerId" :label=" answerChoice.text"/>
                     </div>
                   </div>
                   <div  v-show="question.qType === 'freetext'">
@@ -148,6 +147,7 @@ export default {
   data () {
     return {
       selectedTab: 'QDes',
+      ansRadio: '',
       tabWasLoaded: false,
       genQuIdCounter: 0,
       trackingID: [
