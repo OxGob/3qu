@@ -199,6 +199,12 @@ export default {
                   value: ''
                 }
               ],
+              ansTrackingID: [
+                {
+                  ansID: 0,
+                  ansIndex: 0
+                }
+              ],
               genAnsIdCounter: 1
             }
           ],
@@ -239,7 +245,7 @@ export default {
             value: ''
           }
         ],
-        genAnsIdCounter: 0
+        genAnsIdCounter: 1
       })
       this.addTrackingId(fIndex)
     },
