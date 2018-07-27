@@ -111,7 +111,7 @@
                   <div  v-show="question.qType === 'single'">
                     <q-field class="q-ml-md q-mt-md q-mb-md" label="Select one please: " />
                     <div v-for="(answerChoice) in question.answerChoices" :key="answerChoice.id">
-                        <q-radio class="q-ml-md q-mb-md" v-model="ansRadio" :val="answerChoice.answerId" :label=" answerChoice.text"/>
+                        <q-radio class="q-ml-md q-mb-md" v-model="ansRadio" :val="answerChoice.answerId" :label=" answerChoice.text" @input="radioSelected"/>
                     </div>
                   </div>
                   <div  v-show="question.qType === 'freetext'">
@@ -223,7 +223,8 @@ export default {
     }
   },
   methods: {
-    // Add Remove
+    // Add Remove Functions Section
+    // This function allows questions to be added.
     addRowQuestions (fIndex) {
       this.genQuIdCounter++
       this.forms[fIndex].questions.push({
@@ -231,7 +232,7 @@ export default {
         qHelp: '',
         qId: this.genQuIdCounter,
         nextDefaultId: '',
-        qType: 'freetext',
+        qType: 'single',
         answerChoices: [
           {
             answerId: 0,
@@ -256,6 +257,7 @@ export default {
       })
       this.addTrackQuId(fIndex)
     },
+    // This function allows answer choices per question to be added.
     addAnswerChoices (fIndex, qIndex) {
       this.forms[fIndex].questions[qIndex].genAnsIdCounter++
       this.forms[fIndex].questions[qIndex].answerChoices.push({
@@ -266,6 +268,7 @@ export default {
       })
       this.addTrackAnsId(fIndex, qIndex)
     },
+    // This function allows the selected question to be removed.
     remRowQs (fIndex, qIndex) {
       this.forms[fIndex].questions.splice(qIndex, 1)
       // remove the selected index from the question tracking Array
@@ -281,6 +284,7 @@ export default {
         }
       }
     },
+    // This function allows the selected answer to be removed.
     remRowAns (fIndex, qIndex, aIndex) {
       var pos = this.forms[fIndex].questions[qIndex]
       pos.answerChoices.splice(aIndex, 1)
@@ -297,6 +301,7 @@ export default {
         }
       }
     },
+    // This function allows answers input by the user to be added to the answers arrays.
     addAnswers () {
       var formIndex = this.currFIndex
       // this.$q.notify('the form index is: ' + formIndex)
@@ -401,7 +406,6 @@ export default {
         ansIndex: lastIndexAObj
       })
     },
-
     // This function gets the next Question ID to display
     getQuIdIndex (nextQId) {
       var found = this.trackingID.find(track => track.quesID === nextQId)
@@ -420,6 +424,11 @@ export default {
     timeStamp1 (date, locale) {
       const event = (date === undefined) ? new Date() : new Date(date)
       return event.toLocaleDateString(locale) + ' ' + event.toLocaleTimeString(locale)
+    },
+    radioSelected () {
+      this.$q.notify('The value from radio is: ' + this.ansRadio)
+      // use this value (this.ansRadio) to search answerCHoices
+      // Use this to store/generate an answer
     },
     checkDefId () {
       // Depending on reserved keyword in question/answer, show/hide Next/Finish buttons
