@@ -123,7 +123,7 @@
                   </div>
                   </q-card>
                   <div  v-show="showNextBtn">
-                  <q-btn class="q-ml-md q-mb-md q-mt-md" icon-right="navigate_next" color="blue-7" label="Next" @click="goNext"/>
+                  <q-btn class="q-ml-md q-mb-md q-mt-md" icon-right="navigate_next" color="blue-7" label="Next Question" @click="goNext"/>
                   </div>
                   <q-card-separator class="q-mb-md q-mt-sm"/>
                 </div>
@@ -361,8 +361,8 @@ export default {
           // Call Finish function
         } else {
           nextQId = this.forms[formIndex].questions[questionIndex].nextDefaultId
-          // if nextQId is empty, this function returns the next available question (followin the order of the array)
-          // Something on the line of: nextQId = this.forms[formIndex].questions[questionIndex+1]
+          // [CV]: if nextQId is empty, this function returns the next available question (following the order of the array)
+          // [CV]: Something on the line of: nextQId = this.forms[formIndex].questions[questionIndex+1]
           this.$q.notify('Nxt Q ID 1 Def ID: ' + nextQId)
           var isnum = /^[0-9]+$/.test(nextQId)
           if (isnum === true) {
@@ -406,7 +406,7 @@ export default {
         ansIndex: lastIndexAObj
       })
     },
-    // This function gets the next Question ID to display
+    // This function gets the index of the next Question ID to display
     getQuIdIndex (nextQId) {
       var found = this.trackingID.find(track => track.quesID === nextQId)
       if (typeof found !== 'undefined') {
@@ -427,6 +427,8 @@ export default {
     },
     radioSelected () {
       this.$q.notify('The value from radio is: ' + this.ansRadio)
+      // DO I need this function? the selected value is stored in this.ansRadio
+      // ansRadio can be used by next button
       // use this value (this.ansRadio) to search answerCHoices
       // Use this to store/generate an answer
     },
