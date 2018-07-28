@@ -331,17 +331,16 @@ export default {
     searchAnsChoicesRadio () {
       var val = this.ansRadioVal
       this.$q.notify('The val of ansRadioVal1 is: ' + val)
-      // {"answerId":0,"text":"sdfsfsd","answerValue":1111,"nextQuId":""}
-      // var ansChSearch = [this.forms[0].questions[0].answerchoices]
-      var ansChSearch = [this.forms[0].questions[0].answerchoices]
-      this.$q.notify('ansChSearch is: ' + ansChSearch)
-      var found = ansChSearch.find(ans => ans.answerId === 0)
-      this.$q.notify('Found is: ' + found)
+      // FOR TESTING USE Object BELOW in Answer Choices
+      // [{"answerId":0,"text":"sdfsfsd","answerValue":1111,"nextQuId":""},{"answerId":2,"text":"cvbcvb","answerValue":2323,"nextQuId":"34"}]
+      var ansChSe = this.forms[this.currFIndex].questions[this.currQIndex].answerChoices
+      var found = ansChSe.find(ans => ans.answerId === val)
+      console.log('Found is via: ', found)
       if (typeof found !== 'undefined') {
         // there is something
       } else if (typeof found === 'undefined') {
-        // This means the index does not exist. See if this should trigger finish function. Send an alert to user.
-        this.$q.notify('serch Found is undefined: ')
+        // This means the index does not exist. Error Condition. Send an alert to user.
+        this.$q.notify('search Found is undefined. We cannot find the search index ')
       }
     },
     // TO MAKE GO NEXT REdundant
