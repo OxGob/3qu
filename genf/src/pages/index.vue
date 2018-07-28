@@ -111,7 +111,7 @@
                   <div  v-show="question.qType === 'single'">
                     <q-field class="q-ml-md q-mt-md q-mb-md" label="Select one please: " />
                     <div v-for="(answerChoice) in question.answerChoices" :key="answerChoice.id">
-                        <q-radio class="q-ml-md q-mb-md" v-model="ansRadio" :val="answerChoice.answerId" :label=" answerChoice.text" @input="radioSelected"/>
+                        <q-radio class="q-ml-md q-mb-md" v-model="ansRadioVal" :val="answerChoice.answerId" :label=" answerChoice.text" @input="radioSelected"/>
                     </div>
                   </div>
                   <div  v-show="question.qType === 'freetext'">
@@ -147,7 +147,7 @@ export default {
   data () {
     return {
       selectedTab: 'QDes',
-      ansRadio: '',
+      ansRadioVal: '',
       tabWasLoaded: false,
       genQuIdCounter: 0,
       qTrackingID: [
@@ -312,6 +312,14 @@ export default {
     // This function is called when the user clicks on the next button.
     nextTapped (quType) {
       this.$q.notify('The next Tap Q Type is:' + quType)
+      // 1. If qType = single choice, perform search for answer choices.
+      // If qType =  freetext. Save Answer.
+      if (quType === 'single') {
+        this.searchAnsChoicesRadio()
+      } else if (quType === 'freetext') {
+        // save answer
+        this.$q.notify('Freetxt called')
+      }
     },
     // SEARCH METHODS
     // This function searches for the next question.
@@ -322,14 +330,15 @@ export default {
     // This function searches the answerchoices for the one matching the radio button value.
     // Returns the answer choice. Saved as answer. Next QuId is used.
     searchAnsChoicesRadio () {
-
+      var val = this.ansRadioVal
+      this.$q.notify('The val of ansRadioVal is: ' + val)
     },
     // TO MAKE GO NEXT REdundant
     goNext () {
       // 1. If qType = single choice, perform search for answer choices.
       // ==> this gives answer
       // => this gives next Q Id
-      // If qType =  freetext. Save Answer. Then, use next QId in default ID. do step (3) If not present, then look at scenario 2.2 End or get next question
+      // If qType =  freetext. Save Answer. Then, use next QId in default ID for searchNextQuestion(). do step (3) If not present, then look at scenario 2.2 End or get next question
       // 2. Save answer
       // this.saveAnswers()
       // 2. Find next QID. Perform search after saving answer
@@ -435,8 +444,9 @@ export default {
       const event = (date === undefined) ? new Date() : new Date(date)
       return event.toLocaleDateString(locale) + ' ' + event.toLocaleTimeString(locale)
     },
+    // Radio selected only for TESTING. TO BE MADE REDUNDANT
     radioSelected () {
-      this.$q.notify('The value from radio is: ' + this.ansRadio)
+      this.$q.notify('The value from radio is: ' + this.ansRadioVal)
       // DO I need this function? the selected value is stored in this.ansRadio
       // ansRadio can be used by next button
       // use this value (this.ansRadio) to search answerCHoices
