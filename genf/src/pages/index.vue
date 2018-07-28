@@ -195,12 +195,6 @@ export default {
                   nextQuId: '' // integer. If empty or undefined or keyword, then complete form after this question
                 }
               ],
-              answerOptions: [
-                {
-                  label: '',
-                  value: ''
-                }
-              ],
               ansTrackingID: [
                 {
                   ansID: 0,
@@ -239,12 +233,6 @@ export default {
             text: '',
             answerValue: '', // e.g. y
             nextQuId: '' // integer. If empty or undefined or keyword, then complete form after this question
-          }
-        ],
-        answerOptions: [
-          {
-            label: '',
-            value: ''
           }
         ],
         ansTrackingID: [
@@ -319,10 +307,6 @@ export default {
         timeStamp: ''
       })
     },
-    addAnswerOptions () {
-      // Select options to be displayed for radio button
-      // var formIndex = this.currFIndex
-    },
     // Navigation Methods
     generateForm () {
       this.selectedTab = 'QDesPos'
@@ -333,10 +317,6 @@ export default {
     goBack () {
       this.selectedTab = 'QDes'
       this.tabWasLoaded = false
-    },
-    showQu () {
-      // Show only Q and A according to relevant qID
-      // Set value of var indexToShow
     },
     toggleButton () {
       // Depending on reserved keyword in question/answer, show/hide Next/Finish buttons
