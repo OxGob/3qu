@@ -325,13 +325,24 @@ export default {
     // This function searches for the next question.
     searchNextQuestion () {
       // Algo for searching from question / Answer Next QU ID
-
     },
     // This function searches the answerchoices for the one matching the radio button value.
     // Returns the answer choice. Saved as answer. Next QuId is used.
     searchAnsChoicesRadio () {
       var val = this.ansRadioVal
-      this.$q.notify('The val of ansRadioVal is: ' + val)
+      this.$q.notify('The val of ansRadioVal1 is: ' + val)
+      // {"answerId":0,"text":"sdfsfsd","answerValue":1111,"nextQuId":""}
+      // var ansChSearch = [this.forms[0].questions[0].answerchoices]
+      var ansChSearch = [this.forms[0].questions[0].answerchoices]
+      this.$q.notify('ansChSearch is: ' + ansChSearch)
+      var found = ansChSearch.find(ans => ans.answerId === 0)
+      this.$q.notify('Found is: ' + found)
+      if (typeof found !== 'undefined') {
+        // there is something
+      } else if (typeof found === 'undefined') {
+        // This means the index does not exist. See if this should trigger finish function. Send an alert to user.
+        this.$q.notify('serch Found is undefined: ')
+      }
     },
     // TO MAKE GO NEXT REdundant
     goNext () {
