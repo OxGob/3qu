@@ -111,7 +111,7 @@
                   <div  v-show="question.qType === 'single'">
                     <q-field class="q-ml-md q-mt-md q-mb-md" label="Select one please: " />
                     <div v-for="(answerChoice) in question.answerChoices" :key="answerChoice.id">
-                        <q-radio class="q-ml-md q-mb-md" v-model="ansRadio" :val="answerChoice.answerId" :label=" answerChoice.text" @input="radioSelected"/>
+                        <q-radio class="q-ml-md q-mb-md" v-model="ansRadioVal" :val="answerChoice.answerId" :label=" answerChoice.text" @input="radioSelected"/>
                     </div>
                   </div>
                   <div  v-show="question.qType === 'freetext'">
@@ -123,7 +123,7 @@
                   </div>
                   </q-card>
                   <div  v-show="showNextBtn">
-                  <q-btn class="q-ml-md q-mb-md q-mt-md" icon-right="navigate_next" color="blue-7" label="Next Question" @click="goNext"/>
+                  <q-btn class="q-ml-md q-mb-md q-mt-md" icon-right="navigate_next" color="blue-7" label="Next Question" @click="nextTapped(question.qType)"/>
                   </div>
                   <q-card-separator class="q-mb-md q-mt-sm"/>
                 </div>
@@ -147,7 +147,7 @@ export default {
   data () {
     return {
       selectedTab: 'QDes',
-      ansRadio: '',
+      ansRadioVal: '',
       tabWasLoaded: false,
       genQuIdCounter: 0,
       qTrackingID: [
@@ -305,10 +305,54 @@ export default {
       this.showNextBtn = false
       this.showFinishBtn = true
     },
+    finishForm () {
+      // Button is showed only if keyword in Default ID
+      // Output: Saves to answer object. Closes form.
+    },
+    // This function is called when the user clicks on the next button.
+    nextTapped (quType) {
+      this.$q.notify('The next Tap Q Type is:' + quType)
+      // 1. If qType = single choice, perform search for answer choices.
+      // If qType =  freetext. Save Answer.
+      if (quType === 'single') {
+        this.searchAnsChoicesRadio()
+      } else if (quType === 'freetext') {
+        // save answer
+        this.$q.notify('Freetxt called')
+      }
+    },
+    // SEARCH METHODS
+    // This function searches for the next question.
+    searchNextQuestion () {
+      // Algo for searching from question / Answer Next QU ID
+    },
+    // This function searches the answerchoices for the one matching the radio button value.
+    // Returns the answer choice. Saved as answer. Next QuId is used.
+    searchAnsChoicesRadio () {
+      var val = this.ansRadioVal
+      this.$q.notify('The val of ansRadioVal1 is: ' + val)
+      // {"answerId":0,"text":"sdfsfsd","answerValue":1111,"nextQuId":""}
+      // var ansChSearch = [this.forms[0].questions[0].answerchoices]
+      var ansChSearch = [this.forms[0].questions[0].answerchoices]
+      this.$q.notify('ansChSearch is: ' + ansChSearch)
+      var found = ansChSearch.find(ans => ans.answerId === 0)
+      this.$q.notify('Found is: ' + found)
+      if (typeof found !== 'undefined') {
+        // there is something
+      } else if (typeof found === 'undefined') {
+        // This means the index does not exist. See if this should trigger finish function. Send an alert to user.
+        this.$q.notify('serch Found is undefined: ')
+      }
+    },
+    // TO MAKE GO NEXT REdundant
     goNext () {
-      // 1. Save answer
+      // 1. If qType = single choice, perform search for answer choices.
+      // ==> this gives answer
+      // => this gives next Q Id
+      // If qType =  freetext. Save Answer. Then, use next QId in default ID for searchNextQuestion(). do step (3) If not present, then look at scenario 2.2 End or get next question
+      // 2. Save answer
       // this.saveAnswers()
-      // 2. Find next QID.
+      // 2. Find next QID. Perform search after saving answer
       // 3. Toggle Button
       // this.toggleButton()
       // 4. Show next Question
@@ -346,11 +390,18 @@ export default {
         this.getQuIdIndex(nextQId)
       }
     },
-    finishForm () {
-      // Button is showed only if keyword in Default ID
-      // Output: Saves to answer object. Closes form.
+    // This function gets the index of the next Question ID to display
+    getQuIdIndex (nextQId) {
+      var found = this.qTrackingID.find(track => track.quesID === nextQId)
+      if (typeof found !== 'undefined') {
+        const valIndexOfId = found.quesIndex
+        // this.$q.notify('Value of Index: ' + valIndexOfId)
+        this.currQIndex = valIndexOfId
+      } else if (typeof found === 'undefined') {
+        // This means the index does not exist. See if this should trigger finish function. Send an alert to user.
+      }
     },
-    // Tracking Array Methods
+    // TRACKING ARRAYS METHODS
     addTrackQuId (fIndex) {
       var qObj = this.forms[fIndex].questions
       // to get last index, need length of object as we always add to last index
@@ -370,17 +421,6 @@ export default {
         ansID: this.forms[fIndex].questions[qIndex].genAnsIdCounter,
         ansIndex: lastIndexAObj
       })
-    },
-    // This function gets the index of the next Question ID to display
-    getQuIdIndex (nextQId) {
-      var found = this.qTrackingID.find(track => track.quesID === nextQId)
-      if (typeof found !== 'undefined') {
-        const valIndexOfId = found.quesIndex
-        // this.$q.notify('Value of Index: ' + valIndexOfId)
-        this.currQIndex = valIndexOfId
-      } else if (typeof found === 'undefined') {
-        // This means the index does not exist. See if this should trigger finish function. Send an alert to user.
-      }
     },
     // ANSWERS
     // This function allows answers input by the user to be added to the answers arrays.
@@ -415,8 +455,9 @@ export default {
       const event = (date === undefined) ? new Date() : new Date(date)
       return event.toLocaleDateString(locale) + ' ' + event.toLocaleTimeString(locale)
     },
+    // Radio selected only for TESTING. TO BE MADE REDUNDANT
     radioSelected () {
-      this.$q.notify('The value from radio is: ' + this.ansRadio)
+      this.$q.notify('The value from radio is: ' + this.ansRadioVal)
       // DO I need this function? the selected value is stored in this.ansRadio
       // ansRadio can be used by next button
       // use this value (this.ansRadio) to search answerCHoices
