@@ -123,7 +123,7 @@
                   </div>
                   </q-card>
                   <div  v-show="showNextBtn">
-                  <q-btn class="q-ml-md q-mb-md q-mt-md" icon-right="navigate_next" color="blue-7" label="Next" @click="goNext"/>
+                  <q-btn class="q-ml-md q-mb-md q-mt-md" icon-right="navigate_next" color="blue-7" label="Next Question" @click="goNext"/>
                   </div>
                   <q-card-separator class="q-mb-md q-mt-sm"/>
                 </div>
@@ -150,7 +150,7 @@ export default {
       ansRadio: '',
       tabWasLoaded: false,
       genQuIdCounter: 0,
-      trackingID: [
+      qTrackingID: [
         {
           quesID: 0,
           quesIndex: 0
@@ -195,12 +195,6 @@ export default {
                   nextQuId: '' // integer. If empty or undefined or keyword, then complete form after this question
                 }
               ],
-              answerOptions: [
-                {
-                  label: '',
-                  value: ''
-                }
-              ],
               ansTrackingID: [
                 {
                   ansID: 0,
@@ -241,12 +235,6 @@ export default {
             nextQuId: '' // integer. If empty or undefined or keyword, then complete form after this question
           }
         ],
-        answerOptions: [
-          {
-            label: '',
-            value: ''
-          }
-        ],
         ansTrackingID: [
           {
             ansID: 0,
@@ -272,15 +260,15 @@ export default {
     remRowQs (fIndex, qIndex) {
       this.forms[fIndex].questions.splice(qIndex, 1)
       // remove the selected index from the question tracking Array
-      this.trackingID.splice(qIndex, 1)
+      this.qTrackingID.splice(qIndex, 1)
       // In the tracking array, update the question index for those removed AFTER SPLICE
-      var lengthOfTrackerAfterSplice = Object.keys(this.trackingID).length0
+      var lengthOfTrackerAfterSplice = Object.keys(this.qTrackingID).length0
       if (qIndex < lengthOfTrackerAfterSplice) {
       // If qIndex is NOT LAST, then from qIndex position till last, subtract 1 from values of quesIndex
         var i
         for (i = qIndex; i < lengthOfTrackerAfterSplice; i++) {
-          var fn = this.trackingID[i].quesIndex - 1
-          this.trackingID[i].quesIndex = fn
+          var fn = this.qTrackingID[i].quesIndex - 1
+          this.qTrackingID[i].quesIndex = fn
         }
       }
     },
@@ -301,28 +289,6 @@ export default {
         }
       }
     },
-    // This function allows answers input by the user to be added to the answers arrays.
-    addAnswers () {
-      var formIndex = this.currFIndex
-      // this.$q.notify('the form index is: ' + formIndex)
-      var questionIndex = this.currQIndex
-      var answerIndex = this.currAIndex
-      // To fill in respective answers for each form, use index of questions
-      this.forms[formIndex].answers[questionIndex].questionId = this.forms[formIndex].questions[questionIndex].qId
-      this.forms[formIndex].answers[questionIndex].answerText = this.forms[formIndex].questions[questionIndex].answerChoices[answerIndex].text
-      this.forms[formIndex].answers[questionIndex].answerId = this.forms[formIndex].questions[questionIndex].answerChoices[answerIndex].answerId
-      this.forms[formIndex].answers[questionIndex].timeStamp = this.timeStamp1(new Date(), 'en-gb')
-      this.forms[formIndex].answers.push({
-        questionId: '',
-        answerText: '',
-        answerId: '',
-        timeStamp: ''
-      })
-    },
-    addAnswerOptions () {
-      // Select options to be displayed for radio button
-      // var formIndex = this.currFIndex
-    },
     // Navigation Methods
     generateForm () {
       this.selectedTab = 'QDesPos'
@@ -334,16 +300,19 @@ export default {
       this.selectedTab = 'QDes'
       this.tabWasLoaded = false
     },
-    showQu () {
-      // Show only Q and A according to relevant qID
-      // Set value of var indexToShow
-    },
     toggleButton () {
       // Depending on reserved keyword in question/answer, show/hide Next/Finish buttons
       this.showNextBtn = false
       this.showFinishBtn = true
     },
     goNext () {
+      // 1. Save answer
+      // this.saveAnswers()
+      // 2. Find next QID.
+      // 3. Toggle Button
+      // this.toggleButton()
+      // 4. Show next Question
+      this.indexToShow = this.currQIndex
       // Navigation logic. depending on Default ID or answer ID
       // input: next QID from current Q/Ans or Default ID || Output: navigation + add to answer object
       // check next question Id from current answer ID --> related to current index via search in tracking index
@@ -361,8 +330,8 @@ export default {
           // Call Finish function
         } else {
           nextQId = this.forms[formIndex].questions[questionIndex].nextDefaultId
-          // if nextQId is empty, this function returns the next available question (followin the order of the array)
-          // Something on the line of: nextQId = this.forms[formIndex].questions[questionIndex+1]
+          // [CV]: if nextQId is empty, this function returns the next available question (following the order of the array)
+          // [CV]: Something on the line of: nextQId = this.forms[formIndex].questions[questionIndex+1]
           this.$q.notify('Nxt Q ID 1 Def ID: ' + nextQId)
           var isnum = /^[0-9]+$/.test(nextQId)
           if (isnum === true) {
@@ -376,10 +345,6 @@ export default {
         this.$q.notify('Nxt Q ID2: ' + nextQId)
         this.getQuIdIndex(nextQId)
       }
-      // Show next Question
-      this.indexToShow = this.currQIndex
-      // this.toggleButton()
-      // this.addAnswers()
     },
     finishForm () {
       // Button is showed only if keyword in Default ID
@@ -391,7 +356,7 @@ export default {
       // to get last index, need length of object as we always add to last index
       var lastIndexQObj = Object.keys(qObj).length - 1
       // this.$q.notify('Final index in  questions: ' + lastIndexQObj)
-      this.trackingID.push({
+      this.qTrackingID.push({
         quesID: this.genQuIdCounter,
         quesIndex: lastIndexQObj
       })
@@ -406,9 +371,9 @@ export default {
         ansIndex: lastIndexAObj
       })
     },
-    // This function gets the next Question ID to display
+    // This function gets the index of the next Question ID to display
     getQuIdIndex (nextQId) {
-      var found = this.trackingID.find(track => track.quesID === nextQId)
+      var found = this.qTrackingID.find(track => track.quesID === nextQId)
       if (typeof found !== 'undefined') {
         const valIndexOfId = found.quesIndex
         // this.$q.notify('Value of Index: ' + valIndexOfId)
@@ -416,6 +381,31 @@ export default {
       } else if (typeof found === 'undefined') {
         // This means the index does not exist. See if this should trigger finish function. Send an alert to user.
       }
+    },
+    // ANSWERS
+    // This function allows answers input by the user to be added to the answers arrays.
+    saveAnswers () {
+      var formIndex = this.currFIndex
+      // this.$q.notify('the form index is: ' + formIndex)
+      var questionIndex = this.currQIndex
+      var answerIndex = this.currAIndex
+      // To fill in respective answers for each form, use index of questions
+      // 1. if length of answers Index is  or is i 1?, then add answers only
+      this.forms[formIndex].answers[0].questionId = this.forms[formIndex].questions[questionIndex].qId
+      this.forms[formIndex].answers[0].answerText = this.forms[formIndex].questions[questionIndex].answerChoices[answerIndex].text
+      this.forms[formIndex].answers[0].answerId = this.forms[formIndex].questions[questionIndex].answerChoices[answerIndex].answerId
+      this.forms[formIndex].answers[0].timeStamp = this.timeStamp1(new Date(), 'en-gb')
+      // 2. if answers Index > 0, create an answers object. Add answers to this new one.
+      this.createAnswersObj(formIndex, questionIndex, answerIndex)
+    },
+    // This function creates new answers object.
+    createAnswersObj (formIndex, questionIndex, answerIndex) {
+      this.forms[formIndex].answers.push({
+        questionId: this.forms[formIndex].questions[questionIndex].qId,
+        answerText: this.forms[formIndex].questions[questionIndex].answerChoices[answerIndex].text,
+        answerId: this.forms[formIndex].questions[questionIndex].answerChoices[answerIndex].answerId,
+        timeStamp: this.timeStamp1(new Date(), 'en-gb')
+      })
     },
     // Misc methods
     refreshPage () {
@@ -427,6 +417,8 @@ export default {
     },
     radioSelected () {
       this.$q.notify('The value from radio is: ' + this.ansRadio)
+      // DO I need this function? the selected value is stored in this.ansRadio
+      // ansRadio can be used by next button
       // use this value (this.ansRadio) to search answerCHoices
       // Use this to store/generate an answer
     },
