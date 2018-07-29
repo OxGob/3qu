@@ -173,7 +173,7 @@ export default {
               qHelp: '',
               qId: 0, // integer
               nextDefaultId: '', // if empty or undefined or keyword, then complete form after this question
-              qType: 'single',
+              qType: 'freetext',
               answerChoices: [
                 {
                   answerId: 0,
@@ -313,47 +313,55 @@ export default {
     // This function is called when the user clicks on the next button.
     nextTapped (quType) {
       this.$q.notify('The next Tap Q Type is:' + quType)
-      // 1. If qType = single choice, perform search for answer choices.
-      // If qType =  freetext. Save Answer.
+      // 1. If qType = single choice, perform search for answer choices. If qType =  freetext. Save Answer.
       if (quType === 'single') {
-        this.searchAnsChoicesRadio()
+        this.searchAnsChoicesRadio(quType)
       } else if (quType === 'freetext') {
         // save answer
-        this.$q.notify('Freetxt called')
         var ansFreeId = ''
         var ansFreeTxt = this.forms[this.currFIndex].tempAnsHolder
         this.saveAnswers(ansFreeId, ansFreeTxt)
+        this.searchNextQuestion(quType, null)
       }
     },
     // SEARCH METHODS
     // This function searches for the next question.
-    searchNextQuestion () {
-      // Algo for searching from question / Answer Next QU ID
-      // var formIndex = this.currFIndex
-      // var questionIndex = this.currQIndex
+    searchNextQuestion (quType, questId) {
+      // Algo for searching for next Question.
+      var formIndex = this.currFIndex
+      var questionIndex = this.currQIndex
       // var answerIndex = this.currAIndex
+      var nextQId = this.forms[formIndex].questions[questionIndex].nextDefaultId
+      // If FREETEXT, look at next Qu ID in Question
+      if (quType === 'freetext') {
+        this.$q.notify('search NExt --- freetext ' + nextQId)
+      } else if (quType === 'single') {
+        this.$q.notify('search NExt from sINGLE')
+      }
+      // If SINGLE. look at question / Answer Next QU ID
       // 1. Answer has a next Qu Id ==> use this for next (ANS Next QU ID) —> ( CAN CODE)
       // 2. Answer has no next Qu Id ==> go to Parent Qu ID  —> ( CAN CODE)
       // 2.1. Parent Qu ID has a next Qu Id ==> use this for next (PARENT Next QU ID)
     },
     // This function searches the answerchoices for the one matching the radio button value.
     // Returns the answer choice. Saved as answer. Next QuId is used.
-    searchAnsChoicesRadio () {
+    searchAnsChoicesRadio (quType) {
       var val = this.forms[this.currFIndex].ansRadioVal
       this.$q.notify('The val of ansRadioVal1 is: ' + val)
       // FOR TESTING USE Object BELOW in Answer Choices
       // [{"answerId":0,"text":"sdfsfsd","answerValue":1111,"nextQuId":""},{"answerId":2,"text":"cvbcvb","answerValue":2323,"nextQuId":"34"}]
       var ansChSe = this.forms[this.currFIndex].questions[this.currQIndex].answerChoices
-      var found = ansChSe.find(ans => ans.answerId === val)
-      var foundText = found.text
-      var foundAnsId = found.answerId
-      console.log('Found is via: ', found)
-      if (typeof found !== 'undefined') {
+      var foundAnsCh = ansChSe.find(ans => ans.answerId === val)
+      var foundText = foundAnsCh.text
+      var foundAnsId = foundAnsCh.answerId
+      console.log('Found Ans Ch is via: ', foundAnsCh)
+      if (typeof foundAnsCh !== 'undefined') {
         // Save Answer choice in answers
         this.saveAnswers(foundAnsId, foundText)
-      } else if (typeof found === 'undefined') {
+        this.searchNextQuestion(quType, foundAnsCh.nextQuId)
+      } else if (typeof foundAnsCh === 'undefined') {
         // This means the index does not exist. Error Condition. Send an alert to user.
-        this.$q.notify('search Found is undefined. We cannot find the search index ')
+        this.$q.notify('search Found Ansch is undefined. We cannot find the search index ')
       }
     },
     // TO MAKE GO NEXT REdundant
@@ -404,12 +412,12 @@ export default {
     },
     // This function gets the index of the next Question ID to display
     getQuIdIndex (nextQId) {
-      var found = this.qTrackingID.find(track => track.quesID === nextQId)
-      if (typeof found !== 'undefined') {
-        const valIndexOfId = found.quesIndex
+      var foundQIn = this.qTrackingID.find(track => track.quesID === nextQId)
+      if (typeof foundQIn !== 'undefined') {
+        const valIndexOfId = foundQIn.quesIndex
         // this.$q.notify('Value of Index: ' + valIndexOfId)
         this.currQIndex = valIndexOfId
-      } else if (typeof found === 'undefined') {
+      } else if (typeof foundQIn === 'undefined') {
         // This means the index does not exist. See if this should trigger finish function. Send an alert to user.
       }
     },
