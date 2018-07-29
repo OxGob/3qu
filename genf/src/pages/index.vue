@@ -83,6 +83,7 @@
             <q-card class="bg-light-blue-2 q-ma-xl">
             <q-card-title>Resulting form
               <span slot="subtitle">View the designed form.</span>
+              <q-btn class="float-right q-mr-md" color="black" label="load Test JSON" @click="loadTestJSON"/>
             </q-card-title>
             <q-card-separator class="q-mb-md q-mt-xl"/>
             <q-card-main>
@@ -476,6 +477,12 @@ export default {
       if (keywordQu === 'ENDFORM' || keywordQu === '' || keywordAn === '') {
         this.$q.notify('KWord : ' + keywordQu)
       }
+    },
+    // TESTING METHODS
+    // This function is called from the genereated form and loads a JSON into forms for testing.
+    loadTestJSON () {
+      // Loads a JSON
+      this.$q.notify('load tst json')
     }
   }
 }
