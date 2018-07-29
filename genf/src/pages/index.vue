@@ -116,11 +116,9 @@
                     </div>
                   </div>
                   <div  v-show="question.qType === 'freetext'">
-                    <div v-for="(answer) in form.answers" :key="answer.id">
                       <q-field class="q-ml-md q-mt-md q-mb-md" label="Answer: " helper="Please write an answer." >
-                        <q-input class="q-mb-md" v-model="answer.answerText" align="center" type="textarea" rows="6" clearable/>
+                        <q-input class="q-mb-md" v-model="form.tempAnsHolder" align="center" type="textarea" rows="6" clearable/>
                       </q-field>
-                    </div>
                   </div>
                   </q-card>
                   <div  v-show="showNextBtn">
@@ -166,6 +164,7 @@ export default {
         {
           ansRadioVal: '',
           counterAnswers: 0,
+          tempAnsHolder: '',
           fname: '',
           fDescription: '',
           questions: [
@@ -321,12 +320,21 @@ export default {
       } else if (quType === 'freetext') {
         // save answer
         this.$q.notify('Freetxt called')
+        var ansFreeId = ''
+        var ansFreeTxt = this.forms[this.currFIndex].tempAnsHolder
+        this.saveAnswers(ansFreeId, ansFreeTxt)
       }
     },
     // SEARCH METHODS
     // This function searches for the next question.
     searchNextQuestion () {
       // Algo for searching from question / Answer Next QU ID
+      // var formIndex = this.currFIndex
+      // var questionIndex = this.currQIndex
+      // var answerIndex = this.currAIndex
+      // 1. Answer has a next Qu Id ==> use this for next (ANS Next QU ID) —> ( CAN CODE)
+      // 2. Answer has no next Qu Id ==> go to Parent Qu ID  —> ( CAN CODE)
+      // 2.1. Parent Qu ID has a next Qu Id ==> use this for next (PARENT Next QU ID)
     },
     // This function searches the answerchoices for the one matching the radio button value.
     // Returns the answer choice. Saved as answer. Next QuId is used.
