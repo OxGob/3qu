@@ -149,7 +149,7 @@ export default {
       selectedTab: 'QDes',
       ansRadioVal: '',
       tabWasLoaded: false,
-      genQuIdCounter: 0,
+      counterGenQuID: 0,
       qTrackingID: [
         {
           quesID: 0,
@@ -178,6 +178,7 @@ export default {
       showFinishBtn: false,
       forms: [
         {
+          counterAnswers: 0,
           fname: '',
           fDescription: '',
           questions: [
@@ -201,7 +202,7 @@ export default {
                   ansIndex: 0
                 }
               ],
-              genAnsIdCounter: 0
+              counterAnsChID: 0
             }
           ],
           answers: [
@@ -220,11 +221,11 @@ export default {
     // Add Remove Functions Section
     // This function allows questions to be added.
     addRowQuestions (fIndex) {
-      this.genQuIdCounter++
+      this.counterGenQuID++
       this.forms[fIndex].questions.push({
         qtext: '',
         qHelp: '',
-        qId: this.genQuIdCounter,
+        qId: this.counterGenQuID,
         nextDefaultId: '',
         qType: 'single',
         answerChoices: [
@@ -241,15 +242,15 @@ export default {
             ansIndex: 0
           }
         ],
-        genAnsIdCounter: 0
+        counterAnsChID: 0
       })
       this.addTrackQuId(fIndex)
     },
     // This function allows answer choices per question to be added.
     addAnswerChoices (fIndex, qIndex) {
-      this.forms[fIndex].questions[qIndex].genAnsIdCounter++
+      this.forms[fIndex].questions[qIndex].counterAnsChID++
       this.forms[fIndex].questions[qIndex].answerChoices.push({
-        answerId: this.forms[fIndex].questions[qIndex].genAnsIdCounter,
+        answerId: this.forms[fIndex].questions[qIndex].counterAnsChID,
         text: '',
         // answerValue: '', // e.g. y
         nextQuId: ''
@@ -410,7 +411,7 @@ export default {
       var lastIndexQObj = Object.keys(qObj).length - 1
       // this.$q.notify('Final index in  questions: ' + lastIndexQObj)
       this.qTrackingID.push({
-        quesID: this.genQuIdCounter,
+        quesID: this.counterGenQuID,
         quesIndex: lastIndexQObj
       })
     },
@@ -420,7 +421,7 @@ export default {
       var lastIndexAObj = Object.keys(aObj).length - 1
       // this.$q.notify('Final index in  questions: ' + lastIndexQObj)
       this.forms[fIndex].questions[qIndex].ansTrackingID.push({
-        ansID: this.forms[fIndex].questions[qIndex].genAnsIdCounter,
+        ansID: this.forms[fIndex].questions[qIndex].counterAnsChID,
         ansIndex: lastIndexAObj
       })
     },
@@ -429,27 +430,31 @@ export default {
     saveAnswers (ansId, ansText) {
       var formIndex = this.currFIndex
       var questionIndex = this.currQIndex
+      var savAnsInd = this.counterAnswers
       // NB Need to get correct current ans index from searchAnsChoicesRadio
       // or get values sent in that function. remove comment when fixed
       var answerIndex = this.currAIndex
-      var lenAnsIndex = Object.keys(this.forms[formIndex].answers).length
+      // var lenAnsIndex = Object.keys(this.forms[formIndex].answers).length
       // 1. if length of answers Index is  or is i 1?, then add answers only
       // once index 0 is filled, will need to create a new answer obj and fill that in. Maybe a global counter. remove comment when fixed
-      if (lenAnsIndex === 1) {
-        this.$q.notify('the length index is 1')
-        this.forms[formIndex].answers[0].questionId = this.forms[formIndex].questions[questionIndex].qId
-        this.forms[formIndex].answers[0].answerText = ansText
-        this.forms[formIndex].answers[0].answerId = ansId
-        this.forms[formIndex].answers[0].timeStamp = this.timeStamp1(new Date(), 'en-gb')
-      } else if (lenAnsIndex > 1) {
-        this.$q.notify('the length index is greater than 1')
-      }
+      // if (lenAnsIndex === 1) {
+      // this.$q.notify('the length index is 1')
+      this.forms[formIndex].answers[savAnsInd].questionId = this.forms[formIndex].questions[questionIndex].qId
+      this.forms[formIndex].answers[savAnsInd].answerText = ansText
+      this.forms[formIndex].answers[savAnsInd].answerId = ansId
+      this.forms[formIndex].answers[savAnsInd].timeStamp = this.timeStamp1(new Date(), 'en-gb')
+      // } else if (lenAnsIndex > 1) {
+      // this.$q.notify('the length index is greater than 1')
+      // }
       // this.forms[formIndex].answers[0].questionId = this.forms[formIndex].questions[questionIndex].qId
       // this.forms[formIndex].answers[0].answerText = this.forms[formIndex].questions[questionIndex].answerChoices[answerIndex].text
       // this.forms[formIndex].answers[0].answerId = this.forms[formIndex].questions[questionIndex].answerChoices[answerIndex].answerId
       // this.forms[formIndex].answers[0].timeStamp = this.timeStamp1(new Date(), 'en-gb')
       // 2. if answers Index > 0, create an answers object. Add answers to this new one.
-      this.createAnswersObj(formIndex, questionIndex, answerIndex)
+      // Increment the counter after each save. Create a new Answers object for any new one
+      if (savAnsInd > 0) {
+        this.createAnswersObj(formIndex, questionIndex, answerIndex)
+      }
     },
     // This function creates new answers object.
     createAnswersObj (formIndex, questionIndex, answerIndex) {
