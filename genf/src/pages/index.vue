@@ -323,6 +323,8 @@ export default {
         this.saveAnswers(ansFreeId, ansFreeTxt)
         this.searchNextQuestion(quType, null)
       }
+      // Show the next question
+      this.indexToShow = this.currQIndex
     },
     // SEARCH METHODS
     // This function searches for the next question.
@@ -330,13 +332,22 @@ export default {
       // Algo for searching for next Question.
       var formIndex = this.currFIndex
       var questionIndex = this.currQIndex
-      // var answerIndex = this.currAIndex
+      var answerIndex = this.currAIndex
       var nextQId = this.forms[formIndex].questions[questionIndex].nextDefaultId
+      var nextQIdAns = this.forms[formIndex].questions[questionIndex].answerChoices[answerIndex].nextQuId
       // If FREETEXT, look at next Qu ID in Question
       if (quType === 'freetext') {
         this.$q.notify('search NExt --- freetext ' + nextQId)
+        // Parent Qu ID has a next Qu Id ==> use this for next (PARENT Next QU ID)
+        if (nextQId !== '') {
+          this.getQuIdIndex(parseInt(nextQId, 10))
+        } else {
+        // NO NEXT QU ID in QUESTION ==> Get next question from list of array. Remove when done.
+        }
       } else if (quType === 'single') {
-        this.$q.notify('search NExt from sINGLE')
+        // If SINGLE. look at question / Answer Next QU ID
+        this.$q.notify('search NExt from sINGLE ' + nextQIdAns)
+        // 1. Answer has a next Qu Id ==> use this for next (ANS Next QU ID) —> ( CAN CODE)
       }
       // If SINGLE. look at question / Answer Next QU ID
       // 1. Answer has a next Qu Id ==> use this for next (ANS Next QU ID) —> ( CAN CODE)
