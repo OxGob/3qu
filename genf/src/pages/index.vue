@@ -340,7 +340,7 @@ export default {
       var foundAnsId = found.answerId
       console.log('Found is via: ', found)
       if (typeof found !== 'undefined') {
-        // there is something. Save Answer choice in answers
+        // Save Answer choice in answers
         this.saveAnswers(foundAnsId, foundText)
       } else if (typeof found === 'undefined') {
         // This means the index does not exist. Error Condition. Send an alert to user.
@@ -425,43 +425,31 @@ export default {
         ansIndex: lastIndexAObj
       })
     },
-    // ANSWERS
+    // ANSWERS METHODS
     // This function allows answers input by the user to be added to the answers arrays.
     saveAnswers (ansId, ansText) {
       var formIndex = this.currFIndex
       var questionIndex = this.currQIndex
-      var savAnsInd = this.counterAnswers
-      // NB Need to get correct current ans index from searchAnsChoicesRadio
-      // or get values sent in that function. remove comment when fixed
-      var answerIndex = this.currAIndex
-      // var lenAnsIndex = Object.keys(this.forms[formIndex].answers).length
-      // 1. if length of answers Index is  or is i 1?, then add answers only
-      // once index 0 is filled, will need to create a new answer obj and fill that in. Maybe a global counter. remove comment when fixed
-      // if (lenAnsIndex === 1) {
-      // this.$q.notify('the length index is 1')
-      this.forms[formIndex].answers[savAnsInd].questionId = this.forms[formIndex].questions[questionIndex].qId
-      this.forms[formIndex].answers[savAnsInd].answerText = ansText
-      this.forms[formIndex].answers[savAnsInd].answerId = ansId
-      this.forms[formIndex].answers[savAnsInd].timeStamp = this.timeStamp1(new Date(), 'en-gb')
-      // } else if (lenAnsIndex > 1) {
-      // this.$q.notify('the length index is greater than 1')
-      // }
-      // this.forms[formIndex].answers[0].questionId = this.forms[formIndex].questions[questionIndex].qId
-      // this.forms[formIndex].answers[0].answerText = this.forms[formIndex].questions[questionIndex].answerChoices[answerIndex].text
-      // this.forms[formIndex].answers[0].answerId = this.forms[formIndex].questions[questionIndex].answerChoices[answerIndex].answerId
-      // this.forms[formIndex].answers[0].timeStamp = this.timeStamp1(new Date(), 'en-gb')
-      // 2. if answers Index > 0, create an answers object. Add answers to this new one.
-      // Increment the counter after each save. Create a new Answers object for any new one
-      if (savAnsInd > 0) {
-        this.createAnswersObj(formIndex, questionIndex, answerIndex)
+      var savAnsInd = this.forms[formIndex].counterAnswers
+      this.$q.notify('the var SavaAndIND is: ' + savAnsInd)
+      // Once index 0 is filled, will need to create a new answers object for any new one and fill that in. Increment Answers counter.
+      if (savAnsInd === 0) {
+        this.forms[formIndex].answers[savAnsInd].questionId = this.forms[formIndex].questions[questionIndex].qId
+        this.forms[formIndex].answers[savAnsInd].answerText = ansText
+        this.forms[formIndex].answers[savAnsInd].answerId = ansId
+        this.forms[formIndex].answers[savAnsInd].timeStamp = this.timeStamp1(new Date(), 'en-gb')
+        this.forms[formIndex].counterAnswers++
+      } else if (savAnsInd > 0) {
+        this.createAnswersObj(formIndex, questionIndex, ansId, ansText)
+        this.forms[formIndex].counterAnswers++
       }
     },
-    // This function creates new answers object.
-    createAnswersObj (formIndex, questionIndex, answerIndex) {
+    // This function creates new populated answers object.
+    createAnswersObj (formIndex, questionIndex, ansId, ansText) {
       this.forms[formIndex].answers.push({
         questionId: this.forms[formIndex].questions[questionIndex].qId,
-        answerText: this.forms[formIndex].questions[questionIndex].answerChoices[answerIndex].text,
-        answerId: this.forms[formIndex].questions[questionIndex].answerChoices[answerIndex].answerId,
+        answerText: ansText,
+        answerId: ansId,
         timeStamp: this.timeStamp1(new Date(), 'en-gb')
       })
     },
