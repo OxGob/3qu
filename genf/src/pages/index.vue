@@ -59,9 +59,9 @@
                 <q-field class="q-mb-sm q-ml-sm q-mr-sm" label="Answer Text: " helper="Please enter the answer text. e.g. Yes or No. This IS displayed to the user.">
                   <q-input v-model="answerChoice.text" type="text" align="center" clearable />
                 </q-field>
-                 <q-field class="q-mb-sm q-ml-sm q-mr-sm" label="Answer Value: " helper="Please enter the answer value. This IS NOT displayed to the user and is for INTERNAL use only." >
+                 <!-- <q-field class="q-mb-sm q-ml-sm q-mr-sm" label="Answer Value: " helper="Please enter the answer value. This IS NOT displayed to the user and is for INTERNAL use only." >
                   <q-input v-model="answerChoice.answerValue" type="number" align="center" clearable />
-                </q-field>
+                </q-field> -->
                 <q-field class="q-mb-sm q-ml-sm q-mr-sm" label="Next Question ID: " helper="Please enter the next Question ID (a number) to proceed. To terminate the form, leave the field blank. This IS NOT displayed to the user and is for INTERNAL use only." >
                   <q-input v-model="answerChoice.nextQuId" type="number" align="center" onkeypress="return event.charCode >= 48 && event.charCode <= 57" clearable />
                 </q-field>
@@ -191,7 +191,7 @@ export default {
                 {
                   answerId: 0,
                   text: '',
-                  answerValue: '', // e.g. y
+                  // answerValue: '', // e.g. y
                   nextQuId: '' // integer. If empty or undefined or keyword, then complete form after this question
                 }
               ],
@@ -231,7 +231,7 @@ export default {
           {
             answerId: 0,
             text: '',
-            answerValue: '', // e.g. y
+            // answerValue: '', // e.g. y
             nextQuId: '' // integer. If empty or undefined or keyword, then complete form after this question
           }
         ],
@@ -251,7 +251,7 @@ export default {
       this.forms[fIndex].questions[qIndex].answerChoices.push({
         answerId: this.forms[fIndex].questions[qIndex].genAnsIdCounter,
         text: '',
-        answerValue: '', // e.g. y
+        // answerValue: '', // e.g. y
         nextQuId: ''
       })
       this.addTrackAnsId(fIndex, qIndex)
@@ -471,10 +471,6 @@ export default {
     // Radio selected only for TESTING. TO BE MADE REDUNDANT
     radioSelected () {
       this.$q.notify('The value from radio is: ' + this.ansRadioVal)
-      // DO I need this function? the selected value is stored in this.ansRadio
-      // ansRadio can be used by next button
-      // use this value (this.ansRadio) to search answerCHoices
-      // Use this to store/generate an answer
     },
     checkDefId () {
       // Depending on reserved keyword in question/answer, show/hide Next/Finish buttons
