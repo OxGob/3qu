@@ -32,7 +32,7 @@
               <q-input v-model="question.qId" type="number" align="center" readonly />
             </q-field>
             <q-field class="q-mb-sm q-mt-md q-ml-sm q-mr-sm" label="Question Type: " helper="Please select a question type. This IS NOT displayed to the user and is for INTERNAL use only.">
-              <q-select v-model="question.qType" :options="quSelOptions" />
+              <q-select v-model="question.qType" :options="form.quSelOptions" />
             </q-field>
             <q-field class="q-mb-sm q-ml-sm q-mr-sm" label="Question: " helper="Please enter a question. This IS displayed to the user.">
               <q-input v-model="question.qtext" type="textarea" rows="6" align="center" clearable />
@@ -155,20 +155,6 @@ export default {
           quesIndex: 0
         }
       ],
-      quSelOptions: [
-        {
-          label: 'Freetext',
-          value: 'freetext'
-        },
-        {
-          label: 'Multiple choice',
-          value: 'multi'
-        },
-        {
-          label: 'Single choice',
-          value: 'single'
-        }
-      ],
       indexToShow: 0,
       currFIndex: 0,
       currQIndex: 0,
@@ -211,6 +197,20 @@ export default {
               answerText: '',
               answerId: '',
               timeStamp: ''
+            }
+          ],
+          quSelOptions: [
+            {
+              label: 'Freetext',
+              value: 'freetext'
+            },
+            {
+              label: 'Multiple choice',
+              value: 'multi'
+            },
+            {
+              label: 'Single choice',
+              value: 'single'
             }
           ]
         }
