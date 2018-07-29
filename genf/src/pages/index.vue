@@ -111,7 +111,7 @@
                   <div  v-show="question.qType === 'single'">
                     <q-field class="q-ml-md q-mt-md q-mb-md" label="Select one please: " />
                     <div v-for="(answerChoice) in question.answerChoices" :key="answerChoice.id">
-                        <q-radio class="q-ml-md q-mb-md" v-model="ansRadioVal" :val="answerChoice.answerId" :label=" answerChoice.text" @input="radioSelected"/>
+                        <q-radio class="q-ml-md q-mb-md" v-model="form.ansRadioVal" :val="answerChoice.answerId" :label=" answerChoice.text" @input="radioSelected"/>
                     </div>
                   </div>
                   <div  v-show="question.qType === 'freetext'">
@@ -147,7 +147,6 @@ export default {
   data () {
     return {
       selectedTab: 'QDes',
-      ansRadioVal: '',
       tabWasLoaded: false,
       counterGenQuID: 0,
       qTrackingID: [
@@ -178,6 +177,7 @@ export default {
       showFinishBtn: false,
       forms: [
         {
+          ansRadioVal: '',
           counterAnswers: 0,
           fname: '',
           fDescription: '',
@@ -330,7 +330,7 @@ export default {
     // This function searches the answerchoices for the one matching the radio button value.
     // Returns the answer choice. Saved as answer. Next QuId is used.
     searchAnsChoicesRadio () {
-      var val = this.ansRadioVal
+      var val = this.forms[this.currFIndex].ansRadioVal
       this.$q.notify('The val of ansRadioVal1 is: ' + val)
       // FOR TESTING USE Object BELOW in Answer Choices
       // [{"answerId":0,"text":"sdfsfsd","answerValue":1111,"nextQuId":""},{"answerId":2,"text":"cvbcvb","answerValue":2323,"nextQuId":"34"}]
@@ -463,7 +463,7 @@ export default {
     },
     // Radio selected only for TESTING. TO BE MADE REDUNDANT
     radioSelected () {
-      this.$q.notify('The value from radio is: ' + this.ansRadioVal)
+      this.$q.notify('The value from radio is: ' + this.forms[this.currFIndex].ansRadioVal)
     },
     checkDefId () {
       // Depending on reserved keyword in question/answer, show/hide Next/Finish buttons
