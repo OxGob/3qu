@@ -338,16 +338,29 @@ export default {
       // If FREETEXT, look at next Qu ID in Question
       if (quType === 'freetext') {
         this.$q.notify('search NExt --- freetext ' + nextQId)
-        // Parent Qu ID has a next Qu Id ==> use this for next (PARENT Next QU ID)
+        // Parent Qu ID has a next Qu Id ==> use this for next (PARENT Next QU ID).
+        // NB IMPORTANT: Qu Id Ans ID is ONLY integers for now. No freetext yet. Amend comment when editable is implemented
         if (nextQId !== '') {
+          // Call function to get correct index of the next Question
           this.getQuIdIndex(parseInt(nextQId, 10))
         } else {
-        // NO NEXT QU ID in QUESTION ==> Get next question from list of array. Remove when done.
+        // NB IMPORTANT: NO NEXT QU ID in QUESTION ==> Get next question from list of array. Remove when done.
         }
       } else if (quType === 'single') {
         // If SINGLE. look at question / Answer Next QU ID
         this.$q.notify('search NExt from sINGLE ' + nextQIdAns)
-        // 1. Answer has a next Qu Id ==> use this for next (ANS Next QU ID) —> ( CAN CODE)
+        // 1. Answer has a next Qu Id in Ans Ch ==> use this for next (ANS Next QU ID) —> ( CAN CODE)
+        if (nextQIdAns !== '') {
+          this.getQuIdIndex(parseInt(nextQIdAns, 10))
+        } else if (nextQIdAns === '') {
+          // 2. Answer has no next Qu Id ==> go to Parent Qu ID
+          if (nextQId !== '') {
+          // Call function to get correct index of the next Question
+            this.getQuIdIndex(parseInt(nextQId, 10))
+          } else {
+            // NB IMPORTANT: NO NEXT QU ID in QUESTION ==> Get next question from list of array. Remove when done.
+          }
+        }
       }
       // If SINGLE. look at question / Answer Next QU ID
       // 1. Answer has a next Qu Id ==> use this for next (ANS Next QU ID) —> ( CAN CODE)
