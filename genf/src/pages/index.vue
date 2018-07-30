@@ -340,13 +340,13 @@ export default {
           // Check next question Id (END or PROCEED).
             this.checkNextQId(nextQId)
           } else {
-          // NB IMPORTANT: NO NEXT QU ID in QUESTION ==> Get next question from list of array. Remove comment when done. --> 3
+          // No next Qu Id in Question ==> Get next available question from array of questions in qTrackingID.
             this.getNextFromQsList(questionIndex)
           }
           break
         case 'single':
           // If SINGLE. look for next Qu Id in order: Answer  --> Question --> Array of questions
-          // 1. Answer has a next Qu Id in Ans Ch ==> use this for next (ANS Next QU ID) —> ( CAN CODE)
+          // 1. Answer has a next Qu Id in Ans Ch ==> use this for next (ANS Next QU ID)
           if (nextQIdAns !== '') {
           // Check next question Id (END or PROCEED)
             this.checkNextQId(nextQIdAns)
@@ -356,7 +356,7 @@ export default {
               // Check next question Id (END or PROCEED)
               this.checkNextQId(nextQId)
             } else {
-            // NB IMPORTANT: NO NEXT QU ID in QUESTION ==> Get next question from list of array. Remove when done. --> 6
+            // No next Qu Id in Question ==> Get next available question from list of questions in qTrackingID.
               this.getNextFromQsList(questionIndex)
             }
           }
@@ -381,52 +381,6 @@ export default {
       } else if (typeof foundAnsCh === 'undefined') {
         // NB: This means the index does not exist. Error Condition. Send an alert to user. ----> 1
         this.$q.notify('search Found Ansch is undefined. We cannot find the search index ')
-      }
-    },
-    // TO MAKE GO NEXT REdundant
-    goNext () {
-      // 1. If qType = single choice, perform search for answer choices.
-      // ==> this gives answer
-      // => this gives next Q Id
-      // If qType =  freetext. Save Answer. Then, use next QId in default ID for searchNextQuestion(). do step (3) If not present, then look at scenario 2.2 End or get next question
-      // 2. Save answer
-      // this.saveAnswers()
-      // 2. Find next QID. Perform search after saving answer
-      // 3. Toggle Button
-      // this.toggleButton()
-      // 4. Show next Question
-      this.indexToShow = this.currQIndex
-      // Navigation logic. depending on Default ID or answer ID
-      // input: next QID from current Q/Ans or Default ID || Output: navigation + add to answer object
-      // check next question Id from current answer ID --> related to current index via search in tracking index
-      var formIndex = this.currFIndex
-      var questionIndex = this.currQIndex
-      var answerIndex = this.currAIndex
-      // Check for next quID in answerChoices or default Id of Question. If answer choice is empty, go up and see whether parent ID is empty
-      var nextQId = this.forms[formIndex].questions[questionIndex].answerChoices[answerIndex].nextQuId
-      if (nextQId === '') {
-        this.$q.notify('No next QID')
-        // Check if default ID is filled with integer
-        var keywordQu = this.forms[formIndex].questions[questionIndex].nextDefaultId.toUpperCase()
-        if (keywordQu === 'ENDFORM' || keywordQu === '-1') {
-          this.$q.notify('End form when answer is empty : ' + keywordQu)
-          // Call Finish function
-        } else {
-          nextQId = this.forms[formIndex].questions[questionIndex].nextDefaultId
-          // [CV]: if nextQId is empty, this function returns the next available question (following the order of the array)
-          // [CV]: Something on the line of: nextQId = this.forms[formIndex].questions[questionIndex+1]
-          this.$q.notify('Nxt Q ID 1 Def ID: ' + nextQId)
-          var isnum = /^[0-9]+$/.test(nextQId)
-          if (isnum === true) {
-            this.getQuIdIndex(parseInt(nextQId, 10))
-          } else {
-            // Call Finish method
-          }
-        }
-      } else {
-      // Check in Question Tracking Array for the corresponding index
-        this.$q.notify('Nxt Q ID2: ' + nextQId)
-        this.getQuIdIndex(nextQId)
       }
     },
     // This function gets the next available question from the question list. Called by searchNextQuestion()
