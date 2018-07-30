@@ -83,7 +83,7 @@
             <q-card class="bg-light-blue-2 q-ma-xl">
             <q-card-title>Resulting form
               <span slot="subtitle">View the designed form.</span>
-              <q-btn class="float-right q-mr-md" color="black" label="load Test JSON" @click="loadTestJSON"/>
+              <q-btn class="float-right q-mr-md" color="black" label="load Test JSON" @click="testLoadJSON"/>
             </q-card-title>
             <q-card-separator class="q-mb-md q-mt-xl"/>
             <q-card-main>
@@ -204,10 +204,10 @@ export default {
               label: 'Freetext',
               value: 'freetext'
             },
-            {
-              label: 'Multiple choice',
-              value: 'multi'
-            },
+            // {
+            //   label: 'Multiple choice',
+            //   value: 'multi'
+            // },
             {
               label: 'Single choice',
               value: 'single'
@@ -308,11 +308,10 @@ export default {
     },
     finishForm () {
       // Button is showed only if keyword in Default ID
-      // Output: Saves to answer object. Closes form.
+      // Output: Saves to answer object. Closes form preview part.
     },
     // This function is called when the user clicks on the next button.
     nextTapped (quType) {
-      this.$q.notify('The next Tap Q Type is:' + quType)
       // 1. If qType = single choice, perform search for answer choices. If qType =  freetext. Save Answer.
       if (quType === 'single') {
         this.searchAnsChoicesRadio(quType)
@@ -330,45 +329,49 @@ export default {
     // This function searches for the next question.
     searchNextQuestion (quType, questId) {
       // Algo for searching for next Question.
+      // If SINGLE. look at question / Answer Next QU ID
+      // 1. Answer has a next Qu Id ==> use this for next (ANS Next QU ID) —> ( CAN CODE)
+      // 2. Answer has no next Qu Id ==> go to Parent Qu ID  —> ( CAN CODE)
+      // 2.1. Parent Qu ID has a next Qu Id ==> use this for next (PARENT Next QU ID)
       var formIndex = this.currFIndex
       var questionIndex = this.currQIndex
       var answerIndex = this.currAIndex
       var nextQId = this.forms[formIndex].questions[questionIndex].nextDefaultId
       var nextQIdAns = this.forms[formIndex].questions[questionIndex].answerChoices[answerIndex].nextQuId
-      // If FREETEXT, look at next Qu ID in Question
-      if (quType === 'freetext') {
-        this.$q.notify('search NExt --- freetext ' + nextQId)
-        // Parent Qu ID has a next Qu Id ==> use this for next (PARENT Next QU ID).
-        // NB IMPORTANT: Qu Id Ans ID is ONLY integers for now. No freetext yet. Amend comment when editable is implemented --> 1
-        if (nextQId !== '') {
+      // make swtich stemant
+      switch (quType) {
+        case 'freetext':
+          this.$q.notify('search NExt --- freetext ' + nextQId)
+          // If FREETEXT, look at next Qu ID in Question
+          // Parent Qu ID has a next Qu Id ==> use this for next (PARENT Next QU ID).
+          // NB IMPORTANT: Qu Id Ans ID is ONLY integers for now. No freetext yet. Amend comment when editable is implemented --> 1
+          if (nextQId !== '') {
           // Call function to get correct index of the next Question
           // NB: TO ADD a check for endform or -1 for question END >> If none, Then call getQuIdIndex Remove comment when done. --> 2
-          this.getQuIdIndex(parseInt(nextQId, 10))
-        } else {
-        // NB IMPORTANT: NO NEXT QU ID in QUESTION ==> Get next question from list of array. Remove comment when done. --> 3
-        }
-      } else if (quType === 'single') {
-        // If SINGLE. look at question / Answer Next QU ID
-        this.$q.notify('search NExt from sINGLE ' + nextQIdAns)
-        // 1. Answer has a next Qu Id in Ans Ch ==> use this for next (ANS Next QU ID) —> ( CAN CODE)
-        if (nextQIdAns !== '') {
-          // NB: TO ADD a check for endform or -1 for question END >> If none, Then call getQuIdIndex Remove comment when done.--> 4
-          this.getQuIdIndex(parseInt(nextQIdAns, 10))
-        } else if (nextQIdAns === '') {
-          // 2. Answer has no next Qu Id ==> go to Parent Qu ID
-          if (nextQId !== '') {
-          // NB: TO ADD a check for endform or -1 for question END >> If none, Then call getQuIdIndex Remove comment when done.--> 5
-          // Call function to get correct index of the next Question
             this.getQuIdIndex(parseInt(nextQId, 10))
           } else {
-            // NB IMPORTANT: NO NEXT QU ID in QUESTION ==> Get next question from list of array. Remove when done. --> 6
+          // NB IMPORTANT: NO NEXT QU ID in QUESTION ==> Get next question from list of array. Remove comment when done. --> 3
           }
-        }
+          break
+        case 'single':
+          this.$q.notify('search NExt from sINGLE ' + nextQIdAns)
+          // If SINGLE. look at question / Answer Next QU ID
+          // 1. Answer has a next Qu Id in Ans Ch ==> use this for next (ANS Next QU ID) —> ( CAN CODE)
+          if (nextQIdAns !== '') {
+          // NB: TO ADD a check for endform or -1 for question END >> If none, Then call getQuIdIndex Remove comment when done.--> 4
+            this.getQuIdIndex(parseInt(nextQIdAns, 10))
+          } else if (nextQIdAns === '') {
+          // 2. Answer has no next Qu Id ==> go to Parent Qu ID
+            if (nextQId !== '') {
+              // NB: TO ADD a check for endform or -1 for question END >> If none, Then call getQuIdIndex Remove comment when done.--> 5
+              // Call function to get correct index of the next Question
+              this.getQuIdIndex(parseInt(nextQId, 10))
+            } else {
+            // NB IMPORTANT: NO NEXT QU ID in QUESTION ==> Get next question from list of array. Remove when done. --> 6
+            }
+          }
+          break
       }
-      // If SINGLE. look at question / Answer Next QU ID
-      // 1. Answer has a next Qu Id ==> use this for next (ANS Next QU ID) —> ( CAN CODE)
-      // 2. Answer has no next Qu Id ==> go to Parent Qu ID  —> ( CAN CODE)
-      // 2.1. Parent Qu ID has a next Qu Id ==> use this for next (PARENT Next QU ID)
     },
     // This function searches the answerchoices for the one matching the radio button value.
     // Returns the answer choice. Saved as answer. Next QuId is used.
@@ -459,6 +462,7 @@ export default {
         quesIndex: lastIndexQObj
       })
     },
+    // This function is called when adding an answer Choice
     addTrackAnsId (fIndex, qIndex) {
       var aObj = this.forms[fIndex].questions[qIndex].answerChoices
       // to get last index, need length of object as we always add to last index
@@ -475,7 +479,6 @@ export default {
       var formIndex = this.currFIndex
       var questionIndex = this.currQIndex
       var savAnsInd = this.forms[formIndex].counterAnswers
-      this.$q.notify('the var SavaAndIND is: ' + savAnsInd)
       // Once index 0 is filled, will need to create a new answers object for any new one and fill that in. Increment Answers counter.
       if (savAnsInd === 0) {
         this.forms[formIndex].answers[savAnsInd].questionId = this.forms[formIndex].questions[questionIndex].qId
@@ -523,9 +526,12 @@ export default {
     },
     // TESTING METHODS
     // This function is called from the genereated form and loads a JSON into forms for testing.
-    loadTestJSON () {
+    testLoadJSON () {
       // Loads a JSON
       this.$q.notify('load tst json')
+    },
+    testFinishStage () {
+      this.$q.notify('Arrived at finish stage!')
     }
   }
 }
