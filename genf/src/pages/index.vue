@@ -301,14 +301,13 @@ export default {
       this.selectedTab = 'QDes'
       this.tabWasLoaded = false
     },
-    toggleButton () {
-      // Depending on reserved keyword in question/answer, show/hide Next/Finish buttons
+    toggleFinishBtn () {
+      // Called to hide/show Next/Finish buttons
       this.showNextBtn = false
       this.showFinishBtn = true
     },
     finishForm () {
-      // Button is showed only if keyword in Default ID
-      // Output: Saves to answer object. Closes form preview part.
+      this.$q.notify('Arrived at finish stage!')
     },
     // This function is called when the user clicks on the next button.
     nextTapped (quType) {
@@ -440,7 +439,7 @@ export default {
         // this.$q.notify('Value of Index: ' + valIndexOfId)
         this.currQIndex = valIndexOfId
       } else if (typeof foundQIn === 'undefined') {
-        // This means the index does not exist. See if this should trigger finish function. Send an alert to user.
+        // NB: This means the index does not exist. See if this should trigger finish function. Send an alert to user.
       }
     },
     // TRACKING ARRAYS METHODS
@@ -508,23 +507,11 @@ export default {
     checkNextQId (qIdCheck) {
       // if there is a keyword, call finish. Otherwise proceed to get next question id
       if (qIdCheck === 'ENDFORM' || qIdCheck === '-1') {
-        this.testFinishStage()
+        this.toggleFinishBtn()
       } else if (qIdCheck !== '') {
-        // NB: To add a check here for a valid next question Id. REMOVE WHEN DONE
+        // NB: To add a check here for a valid next question Id. REMOVE WHEN DONE ---> 1
         // If the check returns a valid one call this.getQuIdIndex for next Qu Id
         this.getQuIdIndex(parseInt(qIdCheck, 10))
-      }
-    },
-    checkDefId () {
-      // Depending on reserved keyword in question/answer, show/hide Next/Finish buttons
-      // input: Default Id
-      var formIndex = this.currFIndex
-      var answerIndex = this.currAIndex
-      var questionIndex = this.currQIndex
-      var keywordQu = this.forms[formIndex].questions[questionIndex].nextDefaultId.toUpperCase()
-      var keywordAn = this.forms[formIndex].questions[questionIndex].answerChoices[answerIndex].nextQuId
-      if (keywordQu === 'ENDFORM' || keywordQu === '' || keywordAn === '') {
-        this.$q.notify('KWord : ' + keywordQu)
       }
     },
     // TESTING METHODS
@@ -532,9 +519,6 @@ export default {
     testLoadJSON () {
       // Loads a JSON
       this.$q.notify('load tst json')
-    },
-    testFinishStage () {
-      this.$q.notify('Arrived at finish stage!')
     }
   }
 }
