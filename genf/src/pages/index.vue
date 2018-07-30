@@ -144,12 +144,6 @@ export default {
     return {
       selectedTab: 'QDes',
       tabWasLoaded: false,
-      qTrackingID: [
-        {
-          quesID: 'Initial Question',
-          quesIndex: 0
-        }
-      ],
       indexToShow: 0,
       currFIndex: 0,
       currQIndex: 0,
@@ -159,7 +153,6 @@ export default {
       forms: [
         {
           ansRadioVal: '',
-          genQuLabel: '',
           trackQuID: '',
           counterGenQuID: 0,
           counterAnswers: 0,
@@ -210,6 +203,12 @@ export default {
               label: 'Single choice',
               value: 'single'
             }
+          ],
+          qTrackingID: [
+            {
+              quesID: 'Initial Question',
+              quesIndex: 0
+            }
           ]
         }
       ]
@@ -258,15 +257,15 @@ export default {
     remRowQs (fIndex, qIndex) {
       this.forms[fIndex].questions.splice(qIndex, 1)
       // remove the selected index from the question tracking Array
-      this.qTrackingID.splice(qIndex, 1)
+      this.forms[fIndex].qTrackingID.splice(qIndex, 1)
       // In the tracking array, update the question index for those removed AFTER SPLICE
-      var lengthOfTrackerAfterSplice = Object.keys(this.qTrackingID).length
+      var lengthOfTrackerAfterSplice = Object.keys(this.forms[fIndex].qTrackingID).length
       if (qIndex < lengthOfTrackerAfterSplice) {
       // If qIndex is NOT LAST, then from qIndex position till last, subtract 1 from values of quesIndex
         var i
         for (i = qIndex; i < lengthOfTrackerAfterSplice; i++) {
-          var fn = this.qTrackingID[i].quesIndex - 1
-          this.qTrackingID[i].quesIndex = fn
+          var fn = this.forms[fIndex].qTrackingID[i].quesIndex - 1
+          this.forms[fIndex].qTrackingID[i].quesIndex = fn
         }
       }
     },
@@ -382,7 +381,7 @@ export default {
     getNextFromQsList (indexPos) {
       // Use indexPos. If not last, call next question else call finish function.
       this.$q.notify('indexPos: ' + indexPos)
-      var lenQArray = Object.keys(this.qTrackingID).length
+      var lenQArray = Object.keys(this.forms[this.currFIndex].qTrackingID).length
       if (indexPos >= (lenQArray - 1)) {
         this.toggleFinishBtn()
       } else {
@@ -392,7 +391,7 @@ export default {
     },
     // This function gets the index of the next Question ID to display. Called by checkNextQId()
     getQuIdIndex (nextQId) {
-      var foundQIn = this.qTrackingID.find(track => track.quesID === nextQId)
+      var foundQIn = this.forms[this.currFIndex].qTrackingID.find(track => track.quesID === nextQId)
       if (typeof foundQIn !== 'undefined') {
         const valIndexOfId = foundQIn.quesIndex
         this.currQIndex = valIndexOfId
@@ -407,8 +406,8 @@ export default {
       // to get last index, need length of object as we always add to last index
       var lastIndexQObj = Object.keys(qObj).length - 1
       // this.$q.notify('Final index in  questions: ' + lastIndexQObj)
-      this.qTrackingID.push({
-        quesID: this.forms[fIndex].questions[this.currQIndex + 1].qId,
+      this.forms[fIndex].qTrackingID.push({
+        quesID: this.forms[fIndex].questions[lastIndexQObj].qId,
         quesIndex: lastIndexQObj
       })
     },
@@ -426,7 +425,7 @@ export default {
     // This function is called to update the qTrackingID.
     updtQTrk (fIndex, qIndex) {
       // on user updating the question.qId model
-      this.qTrackingID[qIndex].quesID = this.forms[fIndex].questions[qIndex].qId
+      this.forms[fIndex].qTrackingID[qIndex].quesID = this.forms[fIndex].questions[qIndex].qId
     },
     // ANSWERS METHODS
     // This function allows answers input by the user to be added to the answers arrays.
