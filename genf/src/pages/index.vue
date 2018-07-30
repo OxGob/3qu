@@ -331,7 +331,6 @@ export default {
       switch (quType) {
         case 'freetext':
           // If FREETEXT, look for next Qu Id in order: Question --> Array of questions
-          // NB IMPORTANT: Qu Id Ans ID is ONLY integers for now. No freetext yet. Amend comment when editable is implemented --> 1
           if (nextQId !== '') {
           // Check next question Id (END or PROCEED).
             this.checkNextQId(nextQId)
@@ -391,7 +390,7 @@ export default {
     },
     // This function gets the index of the next Question ID to display. Called by checkNextQId()
     getQuIdIndex (nextQId) {
-      var foundQIn = this.forms[this.currFIndex].qTrackingID.find(track => track.quesID === nextQId)
+      var foundQIn = this.forms[this.currFIndex].qTrackingID.find(track => track.quesID.toUpperCase() === nextQId.toUpperCase())
       if (typeof foundQIn !== 'undefined') {
         const valIndexOfId = foundQIn.quesIndex
         this.currQIndex = valIndexOfId
@@ -465,7 +464,7 @@ export default {
     // This function checks the next Qu Id to either end or proceed. Called by searchNextQuestion().
     checkNextQId (qIdCheck) {
       // if there is a keyword, call finish. Otherwise proceed to get next question id
-      if (qIdCheck === 'ENDFORM' || qIdCheck === '-1') {
+      if (qIdCheck.toUpperCase() === 'ENDFORM' || qIdCheck === '-1') {
         this.toggleFinishBtn()
       } else if (qIdCheck !== '') {
         // NB: To add a check here for a valid next question Id. REMOVE WHEN DONE ---> 1
