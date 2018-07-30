@@ -165,7 +165,7 @@ export default {
               qHelp: '',
               qId: 'Initial Question',
               nextDefaultId: '',
-              qType: 'freetext',
+              qType: 'single',
               answerChoices: [
                 {
                   answerId: 'Answer 1',
@@ -175,7 +175,7 @@ export default {
               ],
               ansTrackingID: [
                 {
-                  ansID: 0,
+                  ansID: 'Answer 1',
                   ansIndex: 0
                 }
               ],
@@ -224,7 +224,7 @@ export default {
         qHelp: '',
         qId: 'Question ' + this.forms[fIndex].counterGenQuID,
         nextDefaultId: '',
-        qType: 'freetext',
+        qType: 'single',
         answerChoices: [
           {
             answerId: 'Answer 1',
@@ -234,7 +234,7 @@ export default {
         ],
         ansTrackingID: [
           {
-            ansID: 0,
+            ansID: 'Answer 1',
             ansIndex: 0
           }
         ],
@@ -401,24 +401,24 @@ export default {
       }
     },
     // TRACKING ARRAYS METHODS
+    // This function updates the Question tracking index. Called by addRowQuestions().
     addTrackQuId (fIndex) {
       var qObj = this.forms[fIndex].questions
       // to get last index, need length of object as we always add to last index
       var lastIndexQObj = Object.keys(qObj).length - 1
-      // this.$q.notify('Final index in  questions: ' + lastIndexQObj)
       this.forms[fIndex].qTrackingID.push({
         quesID: this.forms[fIndex].questions[lastIndexQObj].qId,
         quesIndex: lastIndexQObj
       })
     },
-    // This function is called when adding an answer Choice
+    // This function updates the Answer tracking index. Called by addAnswerChoices()
     addTrackAnsId (fIndex, qIndex) {
       var aObj = this.forms[fIndex].questions[qIndex].answerChoices
       // to get last index, need length of object as we always add to last index
       var lastIndexAObj = Object.keys(aObj).length - 1
       // this.$q.notify('Final index in  questions: ' + lastIndexQObj)
       this.forms[fIndex].questions[qIndex].ansTrackingID.push({
-        ansID: this.forms[fIndex].questions[qIndex].counterAnsChID,
+        ansID: this.forms[fIndex].questions[qIndex].answerChoices[lastIndexAObj].answerId,
         ansIndex: lastIndexAObj
       })
     },
