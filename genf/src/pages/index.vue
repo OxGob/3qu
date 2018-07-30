@@ -28,8 +28,8 @@
             <!-- <q-btn class="q-mb-md" round size="sm" color="amber" icon="add" @click="addRowQuestions(fIndex)" /> -->
             <q-card-separator class="q-mb-md q-mt-lg"/>
             <q-btn class="q-mb-md q-ml-md q-mr-sm" v-show="qIndex !==0" color="red-3" icon="remove" label="Remove this question" @click="remRowQs(fIndex, qIndex)" />
-            <q-field class="q-mb-sm q-mt-sm q-ml-sm q-mr-sm" label="Question ID: " helper="This Question ID is automatically generated and is editable. It is a REQUIRED field This IS displayed to the user.">
-              <q-input v-model="question.qId" type="text" align="center"/>
+            <q-field class="q-mb-sm q-mt-sm q-ml-sm q-mr-sm" label="Question ID: " helper="This Question ID is automatically generated and is editable. It is a REQUIRED field. This IS displayed to the user.">
+              <q-input v-model="question.qId" type="text" align="center" @input="updtQTrk(fIndex, qIndex)"/>
             </q-field>
             <q-field class="q-mb-sm q-mt-md q-ml-sm q-mr-sm" label="Question Type: " helper="Please select a question type. This IS NOT displayed to the user and is for INTERNAL use only.">
               <q-select v-model="question.qType" :options="form.quSelOptions" />
@@ -146,7 +146,7 @@ export default {
       tabWasLoaded: false,
       qTrackingID: [
         {
-          quesID: 0,
+          quesID: 'Initial Question',
           quesIndex: 0
         }
       ],
@@ -160,6 +160,7 @@ export default {
         {
           ansRadioVal: '',
           genQuLabel: '',
+          trackQuID: '',
           counterGenQuID: 0,
           counterAnswers: 0,
           tempAnsHolder: '',
@@ -171,7 +172,7 @@ export default {
               qHelp: '',
               qId: 'Initial Question',
               nextDefaultId: '',
-              qType: 'single',
+              qType: 'freetext',
               answerChoices: [
                 {
                   answerId: 'Answer 1',
@@ -224,7 +225,7 @@ export default {
         qHelp: '',
         qId: 'Question ' + this.forms[fIndex].counterGenQuID,
         nextDefaultId: '',
-        qType: 'single',
+        qType: 'freetext',
         answerChoices: [
           {
             answerId: 'Answer 1',
@@ -394,10 +395,10 @@ export default {
       var foundQIn = this.qTrackingID.find(track => track.quesID === nextQId)
       if (typeof foundQIn !== 'undefined') {
         const valIndexOfId = foundQIn.quesIndex
-        // this.$q.notify('Value of Index: ' + valIndexOfId)
         this.currQIndex = valIndexOfId
       } else if (typeof foundQIn === 'undefined') {
         // NB: This means the index does not exist. See if this should trigger finish function. Send an alert to user.
+        this.$q.notify('The next q ID index is undefined. ')
       }
     },
     // TRACKING ARRAYS METHODS
@@ -407,7 +408,7 @@ export default {
       var lastIndexQObj = Object.keys(qObj).length - 1
       // this.$q.notify('Final index in  questions: ' + lastIndexQObj)
       this.qTrackingID.push({
-        quesID: this.forms[fIndex].counterGenQuID,
+        quesID: this.forms[fIndex].questions[this.currQIndex + 1].qId,
         quesIndex: lastIndexQObj
       })
     },
@@ -421,6 +422,11 @@ export default {
         ansID: this.forms[fIndex].questions[qIndex].counterAnsChID,
         ansIndex: lastIndexAObj
       })
+    },
+    // This function is called to update the qTrackingID.
+    updtQTrk (fIndex, qIndex) {
+      // on user updating the question.qId model
+      this.qTrackingID[qIndex].quesID = this.forms[fIndex].questions[qIndex].qId
     },
     // ANSWERS METHODS
     // This function allows answers input by the user to be added to the answers arrays.
@@ -457,10 +463,6 @@ export default {
       const event = (date === undefined) ? new Date() : new Date(date)
       return event.toLocaleDateString(locale) + ' ' + event.toLocaleTimeString(locale)
     },
-    // Radio selected only for TESTING. TO BE MADE REDUNDANT
-    radioSelected () {
-      this.$q.notify('The value from radio is: ' + this.forms[this.currFIndex].ansRadioVal)
-    },
     // This function checks the next Qu Id to either end or proceed. Called by searchNextQuestion().
     checkNextQId (qIdCheck) {
       // if there is a keyword, call finish. Otherwise proceed to get next question id
@@ -469,7 +471,7 @@ export default {
       } else if (qIdCheck !== '') {
         // NB: To add a check here for a valid next question Id. REMOVE WHEN DONE ---> 1
         // If the check returns a valid one call this.getQuIdIndex for next Qu Id
-        this.getQuIdIndex(parseInt(qIdCheck, 10))
+        this.getQuIdIndex(qIdCheck)
       }
     },
     // TESTING METHODS
@@ -477,6 +479,10 @@ export default {
     testLoadJSON () {
       // Loads a JSON
       this.$q.notify('load tst json')
+    },
+    // Radio selected only for TESTING. TO BE MADE REDUNDANT
+    radioSelected () {
+      this.$q.notify('The value from radio is: ' + this.forms[this.currFIndex].ansRadioVal)
     }
   }
 }
