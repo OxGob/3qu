@@ -29,7 +29,7 @@
             <q-card-separator class="q-mb-md q-mt-lg"/>
             <q-btn class="q-mb-md q-ml-md q-mr-sm" v-show="qIndex !==0" color="red-3" icon="remove" label="Remove this question" @click="remRowQs(fIndex, qIndex)" />
             <q-field class="q-mb-sm q-mt-sm q-ml-sm q-mr-sm" label="Question ID: " helper="This Question ID is automatically generated and is editable. It is a REQUIRED field This IS displayed to the user.">
-              <q-input v-model="question.qId" type="number" align="center" readonly />
+              <q-input v-model="question.qId" type="text" align="center"/>
             </q-field>
             <q-field class="q-mb-sm q-mt-md q-ml-sm q-mr-sm" label="Question Type: " helper="Please select a question type. This IS NOT displayed to the user and is for INTERNAL use only.">
               <q-select v-model="question.qType" :options="form.quSelOptions" />
@@ -40,7 +40,7 @@
             <q-field class="q-mb-sm q-ml-sm q-mr-sm" label="Help: " helper="Please enter a description for any helper label. This IS displayed to the user.">
               <q-input v-model="question.qHelp" type="text" align="center" clearable />
             </q-field>
-             <q-field class="q-mb-sm q-ml-sm q-mr-sm" label="Default/Next Question ID: " helper="Please enter the next Question ID (a number) to proceed. To terminate the form, use the reserved keyword ENDFORM or enter -1. This IS NOT displayed to the user and is for INTERNAL use only.">
+             <q-field class="q-mb-sm q-ml-sm q-mr-sm" label="Default/Next Question ID: " helper="Please enter the next Question ID to proceed. Terminate the form either with the keyword ENDFORM or enter -1. This IS NOT displayed to the user and is for INTERNAL use only.">
               <q-input v-model="question.nextDefaultId" type="text" align="center" clearable />
             </q-field>
             <div  v-show="question.qType !== 'freetext'">
@@ -54,16 +54,13 @@
                 <!-- <q-btn class="q-mb-md" round size="sm" color="green" icon="add" @click="addAnswerChoices(fIndex, qIndex, aIndex)" /> -->
                 <q-btn class="q-mb-md q-ml-md" v-show="aIndex !==0" color="green-3" icon="remove" label="Remove this answer" @click="remRowAns(fIndex, qIndex, aIndex)" />
                 <q-field class="q-mb-sm q-ml-sm q-mt-lg q-mr-sm" label="Answer Label: " helper="This Answer label is editable. This IS NOT displayed to the user and is for INTERNAL use only.." >
-                  <q-input v-model="answerChoice.answerId" type="number" align="center" clearable/>
+                  <q-input v-model="answerChoice.answerId" type="text" align="center" clearable/>
                 </q-field>
                 <q-field class="q-mb-sm q-ml-sm q-mr-sm" label="Answer Text: " helper="Please enter the answer text. e.g. Yes or No. This IS displayed to the user.">
                   <q-input v-model="answerChoice.text" type="text" align="center" clearable />
                 </q-field>
-                 <!-- <q-field class="q-mb-sm q-ml-sm q-mr-sm" label="Answer Value: " helper="Please enter the answer value. This IS NOT displayed to the user and is for INTERNAL use only." >
-                  <q-input v-model="answerChoice.answerValue" type="number" align="center" clearable />
-                </q-field> -->
-                <q-field class="q-mb-sm q-ml-sm q-mr-sm" label="Next Question ID: " helper="Please enter the next Question ID (a number) to proceed. To terminate the form, use the reserved keyword ENDFORM or enter -1. This IS NOT displayed to the user and is for INTERNAL use only." >
-                  <q-input v-model="answerChoice.nextQuId" type="number" align="center" onkeypress="return event.charCode >= 48 && event.charCode <= 57" clearable />
+                <q-field class="q-mb-sm q-ml-sm q-mr-sm" label="Next Question ID: " helper="Please enter the next Question ID to proceed. Terminate the form either with the keyword ENDFORM or enter -1. This IS NOT displayed to the user and is for INTERNAL use only." >
+                  <q-input v-model="answerChoice.nextQuId" type="text" align="center" clearable />
                 </q-field>
                 <q-card-separator class="q-mb-md q-mt-lg"/>
               </div>
@@ -162,6 +159,7 @@ export default {
       forms: [
         {
           ansRadioVal: '',
+          genQuLabel: '',
           counterGenQuID: 0,
           counterAnswers: 0,
           tempAnsHolder: '',
@@ -171,15 +169,14 @@ export default {
             {
               qtext: '',
               qHelp: '',
-              qId: 0, // integer
-              nextDefaultId: '', // if empty or undefined or keyword, then complete form after this question
+              qId: 'Initial Question',
+              nextDefaultId: '',
               qType: 'single',
               answerChoices: [
                 {
-                  answerId: 0,
+                  answerId: 'Answer 1',
                   text: '',
-                  // answerValue: '', // e.g. y
-                  nextQuId: '' // integer. If empty or undefined or keyword, then complete form after this question
+                  nextQuId: ''
                 }
               ],
               ansTrackingID: [
@@ -225,15 +222,14 @@ export default {
       this.forms[fIndex].questions.push({
         qtext: '',
         qHelp: '',
-        qId: this.forms[fIndex].counterGenQuID,
+        qId: 'Question ' + this.forms[fIndex].counterGenQuID,
         nextDefaultId: '',
         qType: 'single',
         answerChoices: [
           {
-            answerId: 0,
+            answerId: 'Answer 1',
             text: '',
-            // answerValue: '', // e.g. y
-            nextQuId: '' // integer. If empty or undefined or keyword, then complete form after this question
+            nextQuId: ''
           }
         ],
         ansTrackingID: [
@@ -249,10 +245,10 @@ export default {
     // This function allows answer choices per question to be added.
     addAnswerChoices (fIndex, qIndex) {
       this.forms[fIndex].questions[qIndex].counterAnsChID++
+      var newAnsLabel = this.forms[fIndex].questions[qIndex].counterAnsChID + 1
       this.forms[fIndex].questions[qIndex].answerChoices.push({
-        answerId: this.forms[fIndex].questions[qIndex].counterAnsChID,
+        answerId: 'Answer ' + newAnsLabel,
         text: '',
-        // answerValue: '', // e.g. y
         nextQuId: ''
       })
       this.addTrackAnsId(fIndex, qIndex)
@@ -367,8 +363,6 @@ export default {
     // Returns the answer choice. Saved as answer. Next QuId is used.
     searchAnsChoicesRadio (quType) {
       var val = this.forms[this.currFIndex].ansRadioVal
-      // FOR TESTING USE Object BELOW in Answer Choices
-      // [{"answerId":0,"text":"sdfsfsd","answerValue":1111,"nextQuId":""},{"answerId":2,"text":"cvbcvb","answerValue":2323,"nextQuId":"34"}]
       var ansChSe = this.forms[this.currFIndex].questions[this.currQIndex].answerChoices
       var foundAnsCh = ansChSe.find(ans => ans.answerId === val)
       var foundText = foundAnsCh.text
