@@ -173,7 +173,7 @@ export default {
               qHelp: '',
               qId: 0, // integer
               nextDefaultId: '', // if empty or undefined or keyword, then complete form after this question
-              qType: 'freetext',
+              qType: 'single',
               answerChoices: [
                 {
                   answerId: 0,
@@ -339,26 +339,29 @@ export default {
       if (quType === 'freetext') {
         this.$q.notify('search NExt --- freetext ' + nextQId)
         // Parent Qu ID has a next Qu Id ==> use this for next (PARENT Next QU ID).
-        // NB IMPORTANT: Qu Id Ans ID is ONLY integers for now. No freetext yet. Amend comment when editable is implemented
+        // NB IMPORTANT: Qu Id Ans ID is ONLY integers for now. No freetext yet. Amend comment when editable is implemented --> 1
         if (nextQId !== '') {
           // Call function to get correct index of the next Question
+          // NB: TO ADD a check for endform or -1 for question END >> If none, Then call getQuIdIndex Remove comment when done. --> 2
           this.getQuIdIndex(parseInt(nextQId, 10))
         } else {
-        // NB IMPORTANT: NO NEXT QU ID in QUESTION ==> Get next question from list of array. Remove when done.
+        // NB IMPORTANT: NO NEXT QU ID in QUESTION ==> Get next question from list of array. Remove comment when done. --> 3
         }
       } else if (quType === 'single') {
         // If SINGLE. look at question / Answer Next QU ID
         this.$q.notify('search NExt from sINGLE ' + nextQIdAns)
         // 1. Answer has a next Qu Id in Ans Ch ==> use this for next (ANS Next QU ID) —> ( CAN CODE)
         if (nextQIdAns !== '') {
+          // NB: TO ADD a check for endform or -1 for question END >> If none, Then call getQuIdIndex Remove comment when done.--> 4
           this.getQuIdIndex(parseInt(nextQIdAns, 10))
         } else if (nextQIdAns === '') {
           // 2. Answer has no next Qu Id ==> go to Parent Qu ID
           if (nextQId !== '') {
+          // NB: TO ADD a check for endform or -1 for question END >> If none, Then call getQuIdIndex Remove comment when done.--> 5
           // Call function to get correct index of the next Question
             this.getQuIdIndex(parseInt(nextQId, 10))
           } else {
-            // NB IMPORTANT: NO NEXT QU ID in QUESTION ==> Get next question from list of array. Remove when done.
+            // NB IMPORTANT: NO NEXT QU ID in QUESTION ==> Get next question from list of array. Remove when done. --> 6
           }
         }
       }
