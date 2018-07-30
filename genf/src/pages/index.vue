@@ -336,34 +336,29 @@ export default {
       var formIndex = this.currFIndex
       var questionIndex = this.currQIndex
       var nextQId = this.forms[formIndex].questions[questionIndex].nextDefaultId
-      var nextQIdAns = questId
-      // make swtich stemant
+      var nextQIdAns = questId // From radio choice by user
       switch (quType) {
         case 'freetext':
-          this.$q.notify('search NExt --- freetext ' + nextQId)
-          // If FREETEXT, look at next Qu ID in Question ==> use this for next
+          // If FREETEXT, look for next Qu Id in order: Question --> Array of questions
           // NB IMPORTANT: Qu Id Ans ID is ONLY integers for now. No freetext yet. Amend comment when editable is implemented --> 1
           if (nextQId !== '') {
-          // Call function to get correct index of the next Question
-          // NB: TO ADD a check for endform or -1 for question END >> If none, Then call getQuIdIndex Remove comment when done. --> 2
-            this.getQuIdIndex(parseInt(nextQId, 10))
+          // Check next question Id (END or PROCEED).
+            this.checkNextQId(nextQId)
           } else {
           // NB IMPORTANT: NO NEXT QU ID in QUESTION ==> Get next question from list of array. Remove comment when done. --> 3
           }
           break
         case 'single':
-          this.$q.notify('search NExt from sINGLE ' + nextQIdAns)
-          // If SINGLE. look at question / Answer Next QU ID
+          // If SINGLE. look for next Qu Id in order: Answer  --> Question --> Array of questions
           // 1. Answer has a next Qu Id in Ans Ch ==> use this for next (ANS Next QU ID) —> ( CAN CODE)
           if (nextQIdAns !== '') {
-          // NB: TO ADD a check for endform or -1 for question END >> If none, Then call getQuIdIndex Remove comment when done.--> 4
-            this.getQuIdIndex(parseInt(nextQIdAns, 10))
+          // Check next question Id (END or PROCEED)
+            this.checkNextQId(nextQIdAns)
           } else if (nextQIdAns === '') {
           // 2. Answer has no next Qu Id ==> go to Parent Qu ID
             if (nextQId !== '') {
-              // NB: TO ADD a check for endform or -1 for question END >> If none, Then call getQuIdIndex Remove comment when done.--> 5
-              // Call function to get correct index of the next Question
-              this.getQuIdIndex(parseInt(nextQId, 10))
+              // Check next question Id (END or PROCEED)
+              this.checkNextQId(nextQId)
             } else {
             // NB IMPORTANT: NO NEXT QU ID in QUESTION ==> Get next question from list of array. Remove when done. --> 6
             }
@@ -375,7 +370,6 @@ export default {
     // Returns the answer choice. Saved as answer. Next QuId is used.
     searchAnsChoicesRadio (quType) {
       var val = this.forms[this.currFIndex].ansRadioVal
-      this.$q.notify('The val of ansRadioVal1 is: ' + val)
       // FOR TESTING USE Object BELOW in Answer Choices
       // [{"answerId":0,"text":"sdfsfsd","answerValue":1111,"nextQuId":""},{"answerId":2,"text":"cvbcvb","answerValue":2323,"nextQuId":"34"}]
       var ansChSe = this.forms[this.currFIndex].questions[this.currQIndex].answerChoices
@@ -509,6 +503,17 @@ export default {
     // Radio selected only for TESTING. TO BE MADE REDUNDANT
     radioSelected () {
       this.$q.notify('The value from radio is: ' + this.forms[this.currFIndex].ansRadioVal)
+    },
+    // This function checks the next Qu Id to either end or proceed. Called by searchNextQuestion().
+    checkNextQId (qIdCheck) {
+      // if there is a keyword, call finish. Otherwise proceed to get next question id
+      if (qIdCheck === 'ENDFORM' || qIdCheck === '-1') {
+        this.testFinishStage()
+      } else if (qIdCheck !== '') {
+        // NB: To add a check here for a valid next question Id. REMOVE WHEN DONE
+        // If the check returns a valid one call this.getQuIdIndex for next Qu Id
+        this.getQuIdIndex(parseInt(qIdCheck, 10))
+      }
     },
     checkDefId () {
       // Depending on reserved keyword in question/answer, show/hide Next/Finish buttons
