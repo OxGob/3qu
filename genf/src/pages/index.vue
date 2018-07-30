@@ -28,7 +28,7 @@
             <!-- <q-btn class="q-mb-md" round size="sm" color="amber" icon="add" @click="addRowQuestions(fIndex)" /> -->
             <q-card-separator class="q-mb-md q-mt-lg"/>
             <q-btn class="q-mb-md q-ml-md q-mr-sm" v-show="qIndex !==0" color="red-3" icon="remove" label="Remove this question" @click="remRowQs(fIndex, qIndex)" />
-            <q-field class="q-mb-sm q-mt-sm q-ml-sm q-mr-sm" label="Question ID: " helper="This Question ID is automatically generated. This IS NOT displayed to the user and is for INTERNAL use only.">
+            <q-field class="q-mb-sm q-mt-sm q-ml-sm q-mr-sm" label="Question ID: " helper="This Question ID is automatically generated and is editable. It is a REQUIRED field This IS displayed to the user.">
               <q-input v-model="question.qId" type="number" align="center" readonly />
             </q-field>
             <q-field class="q-mb-sm q-mt-md q-ml-sm q-mr-sm" label="Question Type: " helper="Please select a question type. This IS NOT displayed to the user and is for INTERNAL use only.">
@@ -62,7 +62,7 @@
                  <!-- <q-field class="q-mb-sm q-ml-sm q-mr-sm" label="Answer Value: " helper="Please enter the answer value. This IS NOT displayed to the user and is for INTERNAL use only." >
                   <q-input v-model="answerChoice.answerValue" type="number" align="center" clearable />
                 </q-field> -->
-                <q-field class="q-mb-sm q-ml-sm q-mr-sm" label="Next Question ID: " helper="Please enter the next Question ID (a number) to proceed. To terminate the form, leave the field blank. This IS NOT displayed to the user and is for INTERNAL use only." >
+                <q-field class="q-mb-sm q-ml-sm q-mr-sm" label="Next Question ID: " helper="Please enter the next Question ID (a number) to proceed. To terminate the form, use the reserved keyword ENDFORM or enter -1. This IS NOT displayed to the user and is for INTERNAL use only." >
                   <q-input v-model="answerChoice.nextQuId" type="number" align="center" onkeypress="return event.charCode >= 48 && event.charCode <= 57" clearable />
                 </q-field>
                 <q-card-separator class="q-mb-md q-mt-lg"/>
@@ -328,10 +328,6 @@ export default {
     // This function searches for the next question. Called by nextTapped (), searchAnsChoicesRadio ()
     searchNextQuestion (quType, questId) {
       // Algo for searching for next Question.
-      // If SINGLE. look at question / Answer Next QU ID
-      // 1. Answer has a next Qu Id ==> use this for next (ANS Next QU ID) —> ( CAN CODE)
-      // 2. Answer has no next Qu Id ==> go to Parent Qu ID  —> ( CAN CODE)
-      // 2.1. Parent Qu ID has a next Qu Id ==> use this for next (PARENT Next QU ID)
       var formIndex = this.currFIndex
       var questionIndex = this.currQIndex
       var nextQId = this.forms[formIndex].questions[questionIndex].nextDefaultId
@@ -345,6 +341,7 @@ export default {
             this.checkNextQId(nextQId)
           } else {
           // NB IMPORTANT: NO NEXT QU ID in QUESTION ==> Get next question from list of array. Remove comment when done. --> 3
+            this.getNextFromQsList(questionIndex)
           }
           break
         case 'single':
@@ -360,6 +357,7 @@ export default {
               this.checkNextQId(nextQId)
             } else {
             // NB IMPORTANT: NO NEXT QU ID in QUESTION ==> Get next question from list of array. Remove when done. --> 6
+              this.getNextFromQsList(questionIndex)
             }
           }
           break
@@ -381,7 +379,7 @@ export default {
         this.saveAnswers(foundAnsId, foundText)
         this.searchNextQuestion(quType, foundAnsCh.nextQuId)
       } else if (typeof foundAnsCh === 'undefined') {
-        // This means the index does not exist. Error Condition. Send an alert to user.
+        // NB: This means the index does not exist. Error Condition. Send an alert to user. ----> 1
         this.$q.notify('search Found Ansch is undefined. We cannot find the search index ')
       }
     },
@@ -431,7 +429,19 @@ export default {
         this.getQuIdIndex(nextQId)
       }
     },
-    // This function gets the index of the next Question ID to display
+    // This function gets the next available question from the question list. Called by searchNextQuestion()
+    getNextFromQsList (indexPos) {
+      // Use indexPos. If not last, call next question else call finish function.
+      this.$q.notify('indexPos: ' + indexPos)
+      var lenQArray = Object.keys(this.qTrackingID).length
+      if (indexPos >= (lenQArray - 1)) {
+        this.toggleFinishBtn()
+      } else {
+        indexPos++
+        this.currQIndex = indexPos
+      }
+    },
+    // This function gets the index of the next Question ID to display. Called by checkNextQId()
     getQuIdIndex (nextQId) {
       var foundQIn = this.qTrackingID.find(track => track.quesID === nextQId)
       if (typeof foundQIn !== 'undefined') {
