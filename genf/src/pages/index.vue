@@ -326,7 +326,7 @@ export default {
       this.indexToShow = this.currQIndex
     },
     // SEARCH METHODS
-    // This function searches for the next question.
+    // This function searches for the next question. Called by nextTapped (), searchAnsChoicesRadio ()
     searchNextQuestion (quType, questId) {
       // Algo for searching for next Question.
       // If SINGLE. look at question / Answer Next QU ID
@@ -335,15 +335,13 @@ export default {
       // 2.1. Parent Qu ID has a next Qu Id ==> use this for next (PARENT Next QU ID)
       var formIndex = this.currFIndex
       var questionIndex = this.currQIndex
-      var answerIndex = this.currAIndex
       var nextQId = this.forms[formIndex].questions[questionIndex].nextDefaultId
-      var nextQIdAns = this.forms[formIndex].questions[questionIndex].answerChoices[answerIndex].nextQuId
+      var nextQIdAns = questId
       // make swtich stemant
       switch (quType) {
         case 'freetext':
           this.$q.notify('search NExt --- freetext ' + nextQId)
-          // If FREETEXT, look at next Qu ID in Question
-          // Parent Qu ID has a next Qu Id ==> use this for next (PARENT Next QU ID).
+          // If FREETEXT, look at next Qu ID in Question ==> use this for next
           // NB IMPORTANT: Qu Id Ans ID is ONLY integers for now. No freetext yet. Amend comment when editable is implemented --> 1
           if (nextQId !== '') {
           // Call function to get correct index of the next Question
@@ -373,7 +371,7 @@ export default {
           break
       }
     },
-    // This function searches the answerchoices for the one matching the radio button value.
+    // This function searches the answerchoices for the one matching the radio button value. Called for Single question type.
     // Returns the answer choice. Saved as answer. Next QuId is used.
     searchAnsChoicesRadio (quType) {
       var val = this.forms[this.currFIndex].ansRadioVal
