@@ -147,7 +147,6 @@ export default {
     return {
       selectedTab: 'QDes',
       tabWasLoaded: false,
-      counterGenQuID: 0,
       qTrackingID: [
         {
           quesID: 0,
@@ -163,6 +162,7 @@ export default {
       forms: [
         {
           ansRadioVal: '',
+          counterGenQuID: 0,
           counterAnswers: 0,
           tempAnsHolder: '',
           fname: '',
@@ -221,11 +221,11 @@ export default {
     // Add Remove Functions Section
     // This function allows questions to be added.
     addRowQuestions (fIndex) {
-      this.counterGenQuID++
+      this.forms[fIndex].counterGenQuID++
       this.forms[fIndex].questions.push({
         qtext: '',
         qHelp: '',
-        qId: this.counterGenQuID,
+        qId: this.forms[fIndex].counterGenQuID,
         nextDefaultId: '',
         qType: 'single',
         answerChoices: [
@@ -439,7 +439,7 @@ export default {
       var lastIndexQObj = Object.keys(qObj).length - 1
       // this.$q.notify('Final index in  questions: ' + lastIndexQObj)
       this.qTrackingID.push({
-        quesID: this.counterGenQuID,
+        quesID: this.forms[fIndex].counterGenQuID,
         quesIndex: lastIndexQObj
       })
     },
