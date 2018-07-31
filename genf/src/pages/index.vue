@@ -523,10 +523,25 @@ export default {
     },
     // This function runs checks on the question id. Flags false. Called by generateForm()
     checkGenQ: function () {
-      // - Want to check if next Qu Id list exists
-      // - Want to check if required fields e.g. question Id/ answer label are required
-      // - Check if these fields are unique
-      // if no issue, then return true
+      // ALGO
+      var arrTk = this.forms[this.currFIndex].qTrackingID
+      // 1. Check if QuId is empty first
+      // Check each ques Id against the rest of the tracking array
+      // If Empty insert into errorArray, skip to next question id in index
+      // if no issue, then go to 2
+      // 2. Check if QuId is unique then ===> use set to get unique values?
+      // so use something like for uppercase, no white spaces var ap = nu.toUpperCase().replace(/ /g,'')
+      let seen = new Set()
+      var hasDuplicates = arrTk.some(function (currentObject) {
+        return seen.size === seen.add(currentObject.quesID).size
+      })
+      // let  getDuplicate = (arr) => arr.filter((value, index) => arr.indexOf(value) !== index);
+      // console.log(getDuplicate([3, 1, 3, 5, 6, 8, 6, 9, 5, 1])); // [ 3, 6, 5, 1 ]
+      // console.log('dups: ', hasDuplicates)
+      // If Not Unique insert into errorArray
+      // 3. Now check if next QID  exists
+      // 4. complete through whole tracking array
+      // if length of error array is not 0, return false See if can return the indices as well
       return true
     },
     // TESTING METHODS
@@ -534,11 +549,11 @@ export default {
     saveForm () {
       const jsonData = JSON.stringify(this.forms[this.currFIndex])
       console.log('jSON Data is: ', jsonData)
-      localStorage.setItem('testJ1', jsonData)
+      localStorage.setItem('testCOPDQ', jsonData)
     },
     // This function is called from the generated form and loads a JSON into forms[0] for testing. User still has to maually click submit in browser.
     testLoadJSON () {
-      var tmpH = localStorage.getItem('testJ1')
+      var tmpH = localStorage.getItem('testCOPDQ')
       var objTm = JSON.parse(tmpH)
       this.forms[this.currFIndex] = objTm
     },
