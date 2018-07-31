@@ -34,8 +34,11 @@
                 <q-btn class="q-mb-md q-mr-sm" v-show="qIndex !==0" color="red-3" icon="remove" label="Remove this question" @click="remRowQs(fIndex, qIndex)" />
               </div>
             </div>
-            <q-field class="q-mb-sm q-mt-sm q-ml-sm q-mr-sm" label="Question ID: " helper="This Question ID is automatically generated and is editable. It is a REQUIRED field. This IS displayed to the user.">
+            <q-field class="q-mb-sm q-mt-sm q-ml-sm q-mr-sm" label="Question ID: " helper="This automatically generated Question ID is editable. It is a REQUIRED field and must be UNIQUE. This IS displayed to the user.">
               <q-input v-model="question.qId" type="text" align="center" @input="updtQTrk(fIndex, qIndex)"/>
+                <div v-show="question.showQIdError === false">
+                  <p style="color:red;">This field must be filled and unique.</p>
+                </div>
             </q-field>
             <q-field class="q-mb-sm q-mt-md q-ml-sm q-mr-sm" label="Question Type: " helper="Please select a question type. This IS NOT displayed to the user and is for INTERNAL use only.">
               <q-select v-model="question.qType" :options="form.quSelOptions" />
@@ -48,6 +51,9 @@
             </q-field>
              <q-field class="q-mb-sm q-ml-sm q-mr-sm" label="Default/Next Question ID: " helper="Please enter the next Question ID to proceed. Terminate the form either with the keyword ENDFORM or enter -1. This IS NOT displayed to the user and is for INTERNAL use only.">
               <q-input v-model="question.nextDefaultId" type="text" align="center" clearable />
+                <div v-show="question.showNextQIdError === false">
+                  <p style="color:red;">This Question ID does not exist.</p>
+                </div>
             </q-field>
             <div  v-show="question.qType !== 'freetext'">
             <q-card-separator class="q-mb-md q-mt-lg"/>
@@ -61,6 +67,9 @@
                 <q-btn class="q-mb-md q-ml-md" v-show="aIndex !==0" color="green-3" icon="remove" label="Remove this answer" @click="remRowAns(fIndex, qIndex, aIndex)" />
                 <q-field class="q-mb-sm q-ml-sm q-mt-lg q-mr-sm" label="Answer Label: " helper="This Answer label is editable. This IS NOT displayed to the user and is for INTERNAL use only.." >
                   <q-input v-model="answerChoice.answerId" type="text" align="center" clearable/>
+                    <div v-show="answerChoice.showAnswerLabelError === false">
+                      <p style="color:red;">This field must be filled and unique.</p>
+                    </div>
                 </q-field>
                 <q-field class="q-mb-sm q-ml-sm q-mr-sm" label="Answer Text: " helper="Please enter the answer text. e.g. Yes or No. This IS displayed to the user.">
                   <q-input v-model="answerChoice.text" type="text" align="center" clearable />
@@ -189,7 +198,8 @@ export default {
                 {
                   answerId: 'Answer 1',
                   text: '',
-                  nextQuId: ''
+                  nextQuId: '',
+                  showAnswerLabelError: false
                 }
               ],
               ansTrackingID: [
@@ -198,7 +208,9 @@ export default {
                   ansIndex: 0
                 }
               ],
-              counterAnsChID: 0
+              counterAnsChID: 0,
+              showNextQIdError: false,
+              showQIdError: false
             }
           ],
           qTrackingID: [
@@ -242,7 +254,8 @@ export default {
           {
             answerId: 'Answer 1',
             text: '',
-            nextQuId: ''
+            nextQuId: '',
+            showAnswerLabelError: false
           }
         ],
         ansTrackingID: [
@@ -251,7 +264,9 @@ export default {
             ansIndex: 0
           }
         ],
-        counterAnsChID: 0
+        counterAnsChID: 0,
+        showNextQIdError: false,
+        showQIdError: false
       })
       this.addTrackQuId(fIndex)
     },
@@ -262,7 +277,8 @@ export default {
       this.forms[fIndex].questions[qIndex].answerChoices.push({
         answerId: 'Answer ' + newAnsLabel,
         text: '',
-        nextQuId: ''
+        nextQuId: '',
+        showAnswerLabelError: false
       })
       this.addTrackAnsId(fIndex, qIndex)
     },
@@ -493,6 +509,12 @@ export default {
       } else {
         // fire error via either notify or display v-show
       }
+    },
+    // This function runs checks on the question id. Flags false. Called by generateForm()
+    checkGenQ () {
+      // - Want to check if next Qu Id list exists
+      // - Want to check if required fields e.g. question Id/ answer label are required
+      // - Check if these fields are unique
     },
     // TESTING METHODS
     // This function is called from the design form and saves a newly created JSON into a local file for testing.
