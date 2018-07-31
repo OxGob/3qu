@@ -154,23 +154,30 @@
 export default {
   data () {
     return {
-      selectedTab: 'QDes',
-      tabWasLoaded: false,
-      indexToShow: 0,
       currFIndex: 0,
       currQIndex: 0,
       currAIndex: 0,
+      indexToShow: 0,
+      selectedTab: 'QDes',
       showNextBtn: true,
       showFinishBtn: false,
+      tabWasLoaded: false,
       forms: [
         {
           ansRadioVal: '',
-          trackQuID: '',
+          answers: [
+            {
+              questionId: '',
+              answerText: '',
+              answerId: '',
+              timeStamp: ''
+            }
+          ],
+          arrayGenQChk: [],
           counterGenQuID: 0,
           counterAnswers: 0,
-          tempAnsHolder: '',
-          fname: '',
           fDescription: '',
+          fname: '',
           questions: [
             {
               qtext: '',
@@ -194,12 +201,10 @@ export default {
               counterAnsChID: 0
             }
           ],
-          answers: [
+          qTrackingID: [
             {
-              questionId: '',
-              answerText: '',
-              answerId: '',
-              timeStamp: ''
+              quesID: 'Initial Question',
+              quesIndex: 0
             }
           ],
           quSelOptions: [
@@ -216,12 +221,8 @@ export default {
               value: 'single'
             }
           ],
-          qTrackingID: [
-            {
-              quesID: 'Initial Question',
-              quesIndex: 0
-            }
-          ]
+          tempAnsHolder: '',
+          trackQuID: ''
         }
       ]
     }
