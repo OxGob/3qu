@@ -36,7 +36,7 @@
             </div>
             <q-field class="q-mb-sm q-mt-sm q-ml-sm q-mr-sm" label="Question ID: " helper="This automatically generated Question ID is editable. It is a REQUIRED field and must be UNIQUE. This IS displayed to the user.">
               <q-input v-model="question.qId" type="text" align="center" @input="updtQTrk(fIndex, qIndex)"/>
-                <div v-show="question.showQIdError === false">
+                <div v-show="question.showQIdError === true">
                   <p style="color:red;">This field must be filled and unique.</p>
                 </div>
             </q-field>
@@ -51,7 +51,7 @@
             </q-field>
              <q-field class="q-mb-sm q-ml-sm q-mr-sm" label="Default/Next Question ID: " helper="Please enter the next Question ID to proceed. Terminate the form either with the keyword ENDFORM or enter -1. This IS NOT displayed to the user and is for INTERNAL use only.">
               <q-input v-model="question.nextDefaultId" type="text" align="center" clearable />
-                <div v-show="question.showNextQIdError === false">
+                <div v-show="question.showNextQIdError === true">
                   <p style="color:red;">This Question ID does not exist.</p>
                 </div>
             </q-field>
@@ -67,7 +67,7 @@
                 <q-btn class="q-mb-md q-ml-md" v-show="aIndex !==0" color="green-3" icon="remove" label="Remove this answer" @click="remRowAns(fIndex, qIndex, aIndex)" />
                 <q-field class="q-mb-sm q-ml-sm q-mt-lg q-mr-sm" label="Answer Label: " helper="This Answer label is editable. This IS NOT displayed to the user and is for INTERNAL use only.." >
                   <q-input v-model="answerChoice.answerId" type="text" align="center" clearable/>
-                    <div v-show="answerChoice.showAnswerLabelError === false">
+                    <div v-show="answerChoice.showAnswerLabelError === true">
                       <p style="color:red;">This field must be filled and unique.</p>
                     </div>
                 </q-field>
@@ -91,10 +91,13 @@
               </div>
               <div class="col-1"></div>
               <div class="col-5">
-                <q-btn class="q-mb-md q-mr-md" color="red" icon-right="navigate_next" @click="generateForm">Generate the form</q-btn>
+                <q-btn class="q-mb-md q-mr-md" color="red" icon-right="navigate_next" @click="genFormTapped">Generate the form</q-btn>
               </div>
               <!-- <q-btn class="q-mb-md" color="red" icon-right="navigate_next" @click="generateForm">Generate the form</q-btn> -->
             </div>
+          <div v-show="showGenError=== true">
+            <p style="border:3px; border-style:solid;padding: 1em;color:red;">There are errors in this form. Please review that the following fields are valid: question, answer and next question. You won't be able to proceed until this is done.</p>
+          </div>
           </q-card>
         </q-tab-pane>
       <!-- QDesPos Tab -->
@@ -168,6 +171,7 @@ export default {
       currAIndex: 0,
       indexToShow: 0,
       selectedTab: 'QDes',
+      showGenError: false,
       showNextBtn: true,
       showFinishBtn: false,
       tabWasLoaded: false,
@@ -316,6 +320,13 @@ export default {
       }
     },
     // Navigation Methods
+    // Function called when generating form. If validation passes, call generateForm ()
+    genFormTapped () {
+      // Only true if both Q and A are true
+      if (this.checkGenQ() === true) {
+        this.$q.notify('check gen returns true')
+      }
+    },
     generateForm () {
       this.selectedTab = 'QDesPos'
       this.tabWasLoaded = true
@@ -511,10 +522,12 @@ export default {
       }
     },
     // This function runs checks on the question id. Flags false. Called by generateForm()
-    checkGenQ () {
+    checkGenQ: function () {
       // - Want to check if next Qu Id list exists
       // - Want to check if required fields e.g. question Id/ answer label are required
       // - Check if these fields are unique
+      // if no issue, then return true
+      return true
     },
     // TESTING METHODS
     // This function is called from the design form and saves a newly created JSON into a local file for testing.
