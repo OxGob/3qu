@@ -145,7 +145,6 @@
 </template>
 
 <script>
-// import testJson from './assets/testJson.json'
 export default {
   data () {
     return {
@@ -482,37 +481,16 @@ export default {
     },
     // TESTING METHODS
     // This function is called from the design form and saves a newly created JSON into a local file for testing.
-    // does not work with object peoperly.
-    // tempsJsHolder will still be modified as it holds a form object will all its reference. Need to save locally
     saveForm () {
-      this.$q.notify('save tst json')
-      this.tempsJsHolder = this.forms[this.currFIndex]
-      const jsonData = JSON.stringify(this.tempsJsHolder)
-      var filename = 'testSv'
-      // console.log('JSON Save is: ', this.tempsJsHolder)
-      let blob = new Blob([jsonData], { type: 'text/plain;charset=utf-8;' })
-      if (navigator.msSaveBlob) { // IE 10+
-        navigator.msSaveBlob(blob, filename)
-      } else {
-        let link = document.createElement('a')
-        if (link.download !== undefined) { // feature detection
-          // Browsers that support HTML5 download attribute
-          let url = URL.createObjectURL(blob)
-          link.setAttribute('href', url)
-          link.setAttribute('download', filename)
-          link.style.visibility = 'hidden'
-          document.body.appendChild(link)
-          link.click()
-          document.body.removeChild(link)
-        }
-      }
+      const jsonData = JSON.stringify(this.forms[this.currFIndex])
+      console.log('jSON Data is: ', jsonData)
+      localStorage.setItem('testJ1', jsonData)
     },
-    // This function is called from the generated form and loads a JSON into forms[0] for testing.
+    // This function is called from the generated form and loads a JSON into forms[0] for testing. User still has to maually click submit in browser.
     testLoadJSON () {
-      // Loads a JSON
-      this.$q.notify('load tst json')
-      this.forms[this.currFIndex] = this.tempsJsHolder
-      console.log('JSON testLoad is: ', this.tempsJsHolder)
+      var tmpH = localStorage.getItem('testJ1')
+      var objTm = JSON.parse(tmpH)
+      this.forms[this.currFIndex] = objTm
     },
     // Radio selected only for TESTING. TO BE MADE REDUNDANT
     radioSelected () {
