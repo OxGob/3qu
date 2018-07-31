@@ -20,14 +20,20 @@
               <q-field class="q-mb-sm" label="Form Description: " helper="Please enter a description for the form. This IS displayed to the user.">
                 <q-input v-model="form.fDescription" type="textarea" rows="5" align="center" clearable />
               </q-field>
-              <q-btn class="q-mt-sm" label="Add More Questions" color="blue" icon="add" @click="addRowQuestions(fIndex)" />
+              <!-- <q-btn class="q-mt-sm" label="Add More Questions" color="blue" icon="add" @click="addRowQuestions(fIndex)" /> -->
               <q-card-separator class="q-mb-md q-mt-lg"/>
       <!-- QDes - Questions -->
         <q-card class="bg-teal-1 q-mt-md q-mb-md">
            <div v-for="(question, qIndex) in form.questions" :key="question.id">
-            <!-- <q-btn class="q-mb-md" round size="sm" color="amber" icon="add" @click="addRowQuestions(fIndex)" /> -->
-            <q-card-separator class="q-mb-md q-mt-lg"/>
-            <q-btn class="q-mb-md q-ml-md q-mr-sm" v-show="qIndex !==0" color="red-3" icon="remove" label="Remove this question" @click="remRowQs(fIndex, qIndex)" />
+             <q-card-separator class="q-mb-md q-mt-lg"/>
+            <div class="row">
+              <div class="col-6">
+                <q-btn class="q-mb-md q-ml-sm" label="Add More Questions" color="blue" icon="add" @click="addRowQuestions(fIndex)" />
+              </div>
+              <div class="col-6">
+                <q-btn class="q-mb-md q-mr-sm" v-show="qIndex !==0" color="red-3" icon="remove" label="Remove this question" @click="remRowQs(fIndex, qIndex)" />
+              </div>
+            </div>
             <q-field class="q-mb-sm q-mt-sm q-ml-sm q-mr-sm" label="Question ID: " helper="This Question ID is automatically generated and is editable. It is a REQUIRED field. This IS displayed to the user.">
               <q-input v-model="question.qId" type="text" align="center" @input="updtQTrk(fIndex, qIndex)"/>
             </q-field>
@@ -156,7 +162,6 @@ export default {
       currAIndex: 0,
       showNextBtn: true,
       showFinishBtn: false,
-      tempsJsHolder: '',
       forms: [
         {
           ansRadioVal: '',
@@ -477,6 +482,15 @@ export default {
         // NB: To add a check here for a valid next question Id. REMOVE WHEN DONE ---> 1
         // If the check returns a valid one call this.getQuIdIndex for next Qu Id (can add e.g remove space in string for comparison)
         this.getQuIdIndex(qIdCheck)
+      }
+    },
+    // Validation Methods - Fields
+    checkFieldQuId (fIndex, qIndex) {
+      var fieldQId = this.forms[fIndex].questions[qIndex].qId
+      if (fieldQId !== '') {
+        this.updtQTrk(fIndex, qIndex)
+      } else {
+        // fire error via either notify or display v-show
       }
     },
     // TESTING METHODS
