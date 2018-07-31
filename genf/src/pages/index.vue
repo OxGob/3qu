@@ -70,8 +70,15 @@
           </q-card>
            </div>
             </q-card-main>
-            <div class="row justify-center">
-              <q-btn class="q-mb-md" color="red" icon-right="navigate_next" @click="generateForm">Generate the form</q-btn>
+            <div class="row">
+              <div class="col-6">
+                <q-btn class="q-mb-md q-ml-md" color="orange" icon-right="save" @click="saveForm">Save the form locally</q-btn>
+              </div>
+              <div class="col-1"></div>
+              <div class="col-5">
+                <q-btn class="q-mb-md q-mr-md" color="red" icon-right="navigate_next" @click="generateForm">Generate the form</q-btn>
+              </div>
+              <!-- <q-btn class="q-mb-md" color="red" icon-right="navigate_next" @click="generateForm">Generate the form</q-btn> -->
             </div>
           </q-card>
         </q-tab-pane>
@@ -138,7 +145,7 @@
 </template>
 
 <script>
-
+// import testJson from './assets/testJson.json'
 export default {
   data () {
     return {
@@ -150,6 +157,7 @@ export default {
       currAIndex: 0,
       showNextBtn: true,
       showFinishBtn: false,
+      tempsJsHolder: '',
       forms: [
         {
           ansRadioVal: '',
@@ -468,15 +476,43 @@ export default {
         this.toggleFinishBtn()
       } else if (qIdCheck !== '') {
         // NB: To add a check here for a valid next question Id. REMOVE WHEN DONE ---> 1
-        // If the check returns a valid one call this.getQuIdIndex for next Qu Id
+        // If the check returns a valid one call this.getQuIdIndex for next Qu Id (can add e.g remove space in string for comparison)
         this.getQuIdIndex(qIdCheck)
       }
     },
     // TESTING METHODS
-    // This function is called from the genereated form and loads a JSON into forms for testing.
+    // This function is called from the design form and saves a newly created JSON into a local file for testing.
+    // does not work with object peoperly.
+    // tempsJsHolder will still be modified as it holds a form object will all its reference. Need to save locally
+    saveForm () {
+      this.$q.notify('save tst json')
+      this.tempsJsHolder = this.forms[this.currFIndex]
+      const jsonData = JSON.stringify(this.tempsJsHolder)
+      var filename = 'testSv'
+      // console.log('JSON Save is: ', this.tempsJsHolder)
+      let blob = new Blob([jsonData], { type: 'text/plain;charset=utf-8;' })
+      if (navigator.msSaveBlob) { // IE 10+
+        navigator.msSaveBlob(blob, filename)
+      } else {
+        let link = document.createElement('a')
+        if (link.download !== undefined) { // feature detection
+          // Browsers that support HTML5 download attribute
+          let url = URL.createObjectURL(blob)
+          link.setAttribute('href', url)
+          link.setAttribute('download', filename)
+          link.style.visibility = 'hidden'
+          document.body.appendChild(link)
+          link.click()
+          document.body.removeChild(link)
+        }
+      }
+    },
+    // This function is called from the generated form and loads a JSON into forms[0] for testing.
     testLoadJSON () {
       // Loads a JSON
       this.$q.notify('load tst json')
+      this.forms[this.currFIndex] = this.tempsJsHolder
+      console.log('JSON testLoad is: ', this.tempsJsHolder)
     },
     // Radio selected only for TESTING. TO BE MADE REDUNDANT
     radioSelected () {
