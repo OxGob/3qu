@@ -132,9 +132,9 @@
           <!-- QDesPos - Answers -->
                   <q-card class="bg-green-2 q-ml-md q-mt-lg q-mb-md q-mr-md">
                   <div  v-show="question.qType === 'single'">
-                    <q-field class="q-ml-md q-mt-md q-mb-md" label="Select one please: " />
+                    <q-field class="q-ml-md q-mt-md q-mb-md" label="Please choose one of the following: " />
                     <div v-for="(answerChoice) in question.answerChoices" :key="answerChoice.id">
-                        <q-radio class="q-ml-md q-mb-md" v-model="form.ansRadioVal" :val="answerChoice.answerId" :label=" answerChoice.text" @input="radioSelected"/>
+                        <q-radio class="q-ml-md q-mb-md" v-model="form.ansRadioVal" :val="answerChoice.answerId" :label=" answerChoice.text"/>
                     </div>
                   </div>
                   <div  v-show="question.qType === 'freetext'">
@@ -324,7 +324,6 @@ export default {
     genFormTapped () {
       // Only true if both Q and A are true
       if (this.checkGenQ() === true) {
-        this.$q.notify('check gen returns true')
         this.generateForm()
       }
     },
@@ -353,18 +352,24 @@ export default {
     },
     // This function is called when the user clicks on the next button.
     nextTapped (quType) {
-      // 1. If qType = single choice, perform search for answer choices. If qType =  freetext. Save Answer.
-      if (quType === 'single') {
-        this.searchAnsChoicesRadio(quType)
-      } else if (quType === 'freetext') {
-        // save answer
-        var ansFreeId = ''
-        var ansFreeTxt = this.forms[this.currFIndex].tempAnsHolder
-        this.saveAnswers(ansFreeId, ansFreeTxt)
-        this.searchNextQuestion(quType, null)
+      var val = this.forms[this.currFIndex].ansRadioVal
+      if (val === '') {
+        this.$q.notify('Please select an answer!')
+      } else {
+        // 1. If qType = single choice, perform search for answer choices. If qType =  freetext. Save Answer.
+        if (quType === 'single') {
+          this.searchAnsChoicesRadio(quType, val)
+        } else if (quType === 'freetext') {
+          // save answer
+          var ansFreeId = ''
+          var ansFreeTxt = this.forms[this.currFIndex].tempAnsHolder
+          this.saveAnswers(ansFreeId, ansFreeTxt)
+          this.searchNextQuestion(quType, null)
+          this.forms[this.currFIndex].tempAnsHolder = ''
+        }
+        // Show the next question
+        this.indexToShow = this.currQIndex
       }
-      // Show the next question
-      this.indexToShow = this.currQIndex
     },
     // SEARCH METHODS
     // This function searches for the next question. Called by nextTapped (), searchAnsChoicesRadio ()
@@ -406,8 +411,7 @@ export default {
     },
     // This function searches the answerchoices for the one matching the radio button value. Called for Single question type.
     // Returns the answer choice. Saved as answer. Next QuId is used.
-    searchAnsChoicesRadio (quType) {
-      var val = this.forms[this.currFIndex].ansRadioVal
+    searchAnsChoicesRadio (quType, val) {
       var ansChSe = this.forms[this.currFIndex].questions[this.currQIndex].answerChoices
       var foundAnsCh = ansChSe.find(ans => ans.answerId === val)
       var foundText = foundAnsCh.text
@@ -417,9 +421,10 @@ export default {
         // Save Answer choice in answers
         this.saveAnswers(foundAnsId, foundText)
         this.searchNextQuestion(quType, foundAnsCh.nextQuId)
+        this.forms[this.currFIndex].ansRadioVal = ''
       } else if (typeof foundAnsCh === 'undefined') {
         // NB: This means the index does not exist. Error Condition. Send an alert to user. ----> 1
-        this.$q.notify('search Found Ansch is undefined. We cannot find the search index ')
+        this.$q.notify('There is an error. Please check your radio values. ')
       }
     },
     // This function gets the next available question from the question list. Called by searchNextQuestion()
@@ -557,7 +562,6 @@ export default {
       errA = [...new Set(errA)]
       // If there is any duplicate or empty QU ID field, return false. To add for missing next QU ID yet
       if (errA.length > 0) {
-        // this.$q.notify('check gen returns false')
         return false
       } else {
         return true
