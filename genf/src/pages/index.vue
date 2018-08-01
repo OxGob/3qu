@@ -353,7 +353,7 @@ export default {
     // This function is called when the user clicks on the next button.
     nextTapped (quType) {
       var val = this.forms[this.currFIndex].ansRadioVal
-      if (val === '') {
+      if ((val === '') && (quType === 'single')) {
         this.$q.notify('Please select an answer!')
       } else {
         // 1. If qType = single choice, perform search for answer choices. If qType =  freetext. Save Answer.
