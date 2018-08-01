@@ -332,11 +332,16 @@ export default {
       this.selectedTab = 'QDesPos'
       this.tabWasLoaded = true
       this.indexToShow = 0
-      // this.toggleButton()
     },
     goBack () {
       this.selectedTab = 'QDes'
       this.tabWasLoaded = false
+      this.showNextBtn = true
+      this.showFinishBtn = false
+      this.currFIndex = 0
+      this.currQIndex = 0
+      this.currAIndex = 0
+      this.forms[this.currFIndex].counterAnswers = 0
     },
     toggleFinishBtn () {
       // Called to hide/show Next/Finish buttons
@@ -531,7 +536,7 @@ export default {
       // 1. Check if QuId is empty first . Check each ques Id against the rest of the tracking array
       // If Empty insert into errorArray, skip to next question id in index. If no issue, then go to 2
       // 2. Check if QuId is unique.If Not Unique insert into errorArray.
-      // 3. Now check if next QID  exists
+      // 3. Check if next QID  exists
       // 4. Complete through whole tracking array
       // if length of error array is not 0, return false See if can return the indices as well
       // IF either duplicate quId or next QId does not exist return false
@@ -552,7 +557,7 @@ export default {
       errA = [...new Set(errA)]
       // If there is any duplicate or empty QU ID field, return false. To add for missing next QU ID yet
       if (errA.length > 0) {
-        this.$q.notify('check gen returns false')
+        // this.$q.notify('check gen returns false')
         return false
       } else {
         return true
