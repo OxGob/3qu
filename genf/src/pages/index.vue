@@ -197,7 +197,7 @@ export default {
               qHelp: '',
               qId: 'Initial Question',
               nextDefaultId: '',
-              qType: 'single',
+              qType: 'freetext',
               answerChoices: [
                 {
                   answerId: 'Answer 1',
@@ -253,7 +253,7 @@ export default {
         qHelp: '',
         qId: 'Question ' + this.forms[fIndex].counterGenQuID,
         nextDefaultId: '',
-        qType: 'single',
+        qType: 'freetext',
         answerChoices: [
           {
             answerId: 'Answer 1',
@@ -325,6 +325,7 @@ export default {
       // Only true if both Q and A are true
       if (this.checkGenQ() === true) {
         this.$q.notify('check gen returns true')
+        this.generateForm()
       }
     },
     generateForm () {
@@ -419,7 +420,6 @@ export default {
     // This function gets the next available question from the question list. Called by searchNextQuestion()
     getNextFromQsList (indexPos) {
       // Use indexPos. If not last, call next question else call finish function.
-      this.$q.notify('indexPos: ' + indexPos)
       var lenQArray = Object.keys(this.forms[this.currFIndex].qTrackingID).length
       if (indexPos >= (lenQArray - 1)) {
         this.toggleFinishBtn()
@@ -430,7 +430,7 @@ export default {
     },
     // This function gets the index of the next Question ID to display. Called by checkNextQId()
     getQuIdIndex (nextQId) {
-      var foundQIn = this.forms[this.currFIndex].qTrackingID.find(track => track.quesID.toUpperCase() === nextQId.toUpperCase())
+      var foundQIn = this.forms[this.currFIndex].qTrackingID.find(track => track.quesID.toUpperCase().replace(/ /g, '') === nextQId.toUpperCase().replace(/ /g, ''))
       if (typeof foundQIn !== 'undefined') {
         const valIndexOfId = foundQIn.quesIndex
         this.currQIndex = valIndexOfId
@@ -507,7 +507,7 @@ export default {
       if (qIdCheck.toUpperCase() === 'ENDFORM' || qIdCheck === '-1') {
         this.toggleFinishBtn()
       } else if (qIdCheck !== '') {
-        // NB: To add a check here for a valid next question Id. REMOVE WHEN DONE ---> 1
+        // ?? NB: To add a check here for a valid next question Id. REMOVE WHEN DONE ---> 1
         // If the check returns a valid one call this.getQuIdIndex for next Qu Id (can add e.g remove space in string for comparison)
         this.getQuIdIndex(qIdCheck)
       }
@@ -525,6 +525,9 @@ export default {
     checkGenQ: function () {
       // ALGO
       var arrTk = this.forms[this.currFIndex].qTrackingID
+      var i, j
+      var lenA = arrTk.length
+      var errA = [] // Combines empty and duplicates quID
       // 1. Check if QuId is empty first . Check each ques Id against the rest of the tracking array
       // If Empty insert into errorArray, skip to next question id in index. If no issue, then go to 2
       // 2. Check if QuId is unique.If Not Unique insert into errorArray.
@@ -532,10 +535,6 @@ export default {
       // 4. Complete through whole tracking array
       // if length of error array is not 0, return false See if can return the indices as well
       // IF either duplicate quId or next QId does not exist return false
-      var i, j
-      var lenA = arrTk.length
-      var errA = []
-      // Combines empty and duplicates
       for (i = 0; i < lenA; i++) {
         var name = arrTk[i].quesID.toUpperCase().replace(/ /g, '')
         if (name === '') {
@@ -549,7 +548,7 @@ export default {
           }
         }
       }
-      console.log('After Push B4, errC is: ', errA)
+      // console.log('After Push B4, errC is: ', errA)
       errA = [...new Set(errA)]
       // If there is any duplicate or empty QU ID field, return false. To add for missing next QU ID yet
       if (errA.length > 0) {
