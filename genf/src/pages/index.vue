@@ -525,24 +525,39 @@ export default {
     checkGenQ: function () {
       // ALGO
       var arrTk = this.forms[this.currFIndex].qTrackingID
-      // 1. Check if QuId is empty first
-      // Check each ques Id against the rest of the tracking array
-      // If Empty insert into errorArray, skip to next question id in index
-      // if no issue, then go to 2
-      // 2. Check if QuId is unique then ===> use set to get unique values?
-      // so use something like for uppercase, no white spaces var ap = nu.toUpperCase().replace(/ /g,'')
-      let seen = new Set()
-      var hasDuplicates = arrTk.some(function (currentObject) {
-        return seen.size === seen.add(currentObject.quesID).size
-      })
-      // let  getDuplicate = (arr) => arr.filter((value, index) => arr.indexOf(value) !== index);
-      // console.log(getDuplicate([3, 1, 3, 5, 6, 8, 6, 9, 5, 1])); // [ 3, 6, 5, 1 ]
-      // console.log('dups: ', hasDuplicates)
-      // If Not Unique insert into errorArray
+      // 1. Check if QuId is empty first . Check each ques Id against the rest of the tracking array
+      // If Empty insert into errorArray, skip to next question id in index. If no issue, then go to 2
+      // 2. Check if QuId is unique.If Not Unique insert into errorArray.
       // 3. Now check if next QID  exists
-      // 4. complete through whole tracking array
+      // 4. Complete through whole tracking array
       // if length of error array is not 0, return false See if can return the indices as well
-      return true
+      // IF either duplicate quId or next QId does not exist return false
+      var i, j
+      var lenA = arrTk.length
+      var errA = []
+      // Combines empty and duplicates
+      for (i = 0; i < lenA; i++) {
+        var name = arrTk[i].quesID.toUpperCase().replace(/ /g, '')
+        if (name === '') {
+          errA.push(arrTk[i].quesIndex)
+        } else {
+          for (j = i + 1; j < lenA; j++) {
+            var name2 = arrTk[j].quesID.toUpperCase().replace(/ /g, '')
+            if ((name2 !== '') && (name === name2)) {
+              errA.push(arrTk[j].quesIndex)
+            }
+          }
+        }
+      }
+      console.log('After Push B4, errC is: ', errA)
+      errA = [...new Set(errA)]
+      // If there is any duplicate or empty QU ID field, return false. To add for missing next QU ID yet
+      if (errA.length > 0) {
+        this.$q.notify('check gen returns false')
+        return false
+      } else {
+        return true
+      }
     },
     // TESTING METHODS
     // This function is called from the design form and saves a newly created JSON into a local file for testing.
