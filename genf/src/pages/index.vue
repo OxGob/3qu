@@ -337,10 +337,7 @@ export default {
       this.tabWasLoaded = false
       this.showNextBtn = true
       this.showFinishBtn = false
-      this.currFIndex = 0
-      this.currQIndex = 0
-      this.currAIndex = 0
-      this.forms[this.currFIndex].counterAnswers = 0
+      this.reset()
     },
     toggleFinishBtn () {
       // Called to hide/show Next/Finish buttons
@@ -504,13 +501,6 @@ export default {
       })
     },
     // Misc methods
-    refreshPage () {
-      location.reload(true)
-    },
-    timeStamp1 (date, locale) {
-      const event = (date === undefined) ? new Date() : new Date(date)
-      return event.toLocaleDateString(locale) + ' ' + event.toLocaleTimeString(locale)
-    },
     // This function checks the next Qu Id to either end or proceed. Called by searchNextQuestion().
     checkNextQId (qIdCheck) {
       // if there is a keyword, call finish. Otherwise proceed to get next question id
@@ -521,6 +511,28 @@ export default {
         // If the check returns a valid one call this.getQuIdIndex for next Qu Id (can add e.g remove space in string for comparison)
         this.getQuIdIndex(qIdCheck)
       }
+    },
+    refreshPage () {
+      location.reload(true)
+    },
+    // This function resets some variables and clears the answers array.
+    reset () {
+      var fIn = this.currFIndex
+      this.currFIndex = 0
+      this.currQIndex = 0
+      this.currAIndex = 0
+      this.forms[fIn].answers = []
+      this.forms[fIn].answers.push({
+        questionId: '',
+        answerText: '',
+        answerId: '',
+        timeStamp: ''
+      })
+      this.forms[fIn].counterAnswers = 0
+    },
+    timeStamp1 (date, locale) {
+      const event = (date === undefined) ? new Date() : new Date(date)
+      return event.toLocaleDateString(locale) + ' ' + event.toLocaleTimeString(locale)
     },
     // Validation Methods - Fields
     checkFieldQuId (fIndex, qIndex) {
