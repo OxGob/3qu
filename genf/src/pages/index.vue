@@ -543,6 +543,13 @@ export default {
         // fire error via either notify or display v-show
       }
     },
+    checkNextDefId () {
+      // Algo
+      // 1. use defId from questions.defaultId
+      // 2. For each question, get the def id
+      // 3. check this against the tracking q id
+      // 4. if it exists return true
+    },
     // This function runs checks on the question id. Flags false. Called by generateForm()
     checkGenQ: function () {
       // ALGO --> If either duplicate quId or next QId does not exist, return false
