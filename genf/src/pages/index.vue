@@ -545,23 +545,20 @@ export default {
     },
     // This function runs checks on the question id. Flags false. Called by generateForm()
     checkGenQ: function () {
-      // ALGO
+      // ALGO --> If either duplicate quId or next QId does not exist, return false
       var arrTk = this.forms[this.currFIndex].qTrackingID
       var i, j
       var lenA = arrTk.length
       var errA = [] // Combines empty and duplicates quID
-      // 1. Check if QuId is empty first . Check each ques Id against the rest of the tracking array
-      // If Empty insert into errorArray, skip to next question id in index. If no issue, then go to 2
-      // 2. Check if QuId is unique.If Not Unique insert into errorArray.
-      // 3. Check if next QID  exists
-      // 4. Complete through whole tracking array
-      // if length of error array is not 0, return false See if can return the indices as well
-      // IF either duplicate quId or next QId does not exist return false
       for (i = 0; i < lenA; i++) {
         var name = arrTk[i].quesID.toUpperCase().replace(/ /g, '')
+        // 1. Check if QuId is empty first . Check each ques Id against the rest of the tracking array
+        // If Empty insert into errorArray, skip to next question id in index. If no issue, then go to 2
         if (name === '') {
           errA.push(arrTk[i].quesIndex)
         } else {
+          // 2. Check if QuId is unique.If Not Unique insert into errorArray.
+          // 3. Check if next QID  exists
           for (j = i + 1; j < lenA; j++) {
             var name2 = arrTk[j].quesID.toUpperCase().replace(/ /g, '')
             if ((name2 !== '') && (name === name2)) {
@@ -572,7 +569,7 @@ export default {
       }
       // console.log('After Push B4, errC is: ', errA)
       errA = [...new Set(errA)]
-      // If there is any duplicate or empty QU ID field, return false. To add for missing next QU ID yet
+      // If there is any duplicate or empty QU ID field (i.e. length of error array is not 0), return false. To add for missing next QU ID yet
       if (errA.length > 0) {
         return false
       } else {
