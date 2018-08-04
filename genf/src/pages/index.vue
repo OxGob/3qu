@@ -535,6 +535,7 @@ export default {
       return event.toLocaleDateString(locale) + ' ' + event.toLocaleTimeString(locale)
     },
     // Validation Methods - Fields
+    // NB: Check whether need to keep this functin for future use. think this was meant to be used for error msg if field was empty
     checkFieldQuId (fIndex, qIndex) {
       var fieldQId = this.forms[fIndex].questions[qIndex].qId
       if (fieldQId !== '') {
@@ -544,13 +545,35 @@ export default {
       }
     },
     checkNextDefId () {
-      // Algo
-      // 1. use defId from questions.defaultId
+      // Algo --> checks if the next def ID exists
+      // 1. use defId from questions.defaultId. Cycle through questions []
       // 2. For each question, get the def id
       // 3. check this against the tracking q id
-      // 4. if it exists return true
+      // 4. If the next def id doesn't exist, then in error array, add the index of the question
+      var fIndex = this.currFIndex
+      // var qIndex = this.currQIndex
+      var quArr = this.forms[fIndex].questions
+      var arrTk = this.forms[this.currFIndex].qTrackingID
+      var lenQ = quArr.length
+      var lenA = arrTk.length
+      var errNq = []
+      var i, j
+      // check in arr of q
+      for (i = 0; i < lenQ; i++) {
+        var fieldDefQId = this.forms[fIndex].questions[i].nextDefaultId.toUpperCase().replace(/ /g, '')
+        if (fieldDefQId !== '') {
+          for (j = 0; j < lenA; j++) {
+            var nameQId = arrTk[j].quesID.toUpperCase().replace(/ /g, '')
+            if (fieldDefQId !== nameQId) {
+              errNq.push(i)
+            }
+          }
+        }
+      }
+      errNq = [...new Set(errNq)]
+      console.log('Error NdefQ index: ', errNq)
     },
-    // This function runs checks on the question id. Flags false. Called by generateForm()
+    // This function checks if the question id is empty or a duplicate. Flags false. Called by generateForm()
     checkGenQ: function () {
       // ALGO --> If either duplicate quId or next QId does not exist, return false
       var arrTk = this.forms[this.currFIndex].qTrackingID
@@ -589,6 +612,7 @@ export default {
       const jsonData = JSON.stringify(this.forms[this.currFIndex])
       console.log('jSON Data is: ', jsonData)
       localStorage.setItem('testCOPDQ', jsonData)
+      this.checkNextDefId()
     },
     // This function is called from the generated form and loads a JSON into forms[0] for testing. User still has to maually click submit in browser.
     testLoadJSON () {
