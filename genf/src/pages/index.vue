@@ -163,6 +163,7 @@
 </template>
 
 <script>
+import axios from 'axios'
 export default {
   data () {
     return {
@@ -582,9 +583,19 @@ export default {
     // TESTING METHODS
     // This function is called from the design form and saves a newly created JSON into a local file for testing.
     saveForm () {
-      const jsonData = JSON.stringify(this.forms[this.currFIndex])
-      console.log('jSON Data is: ', jsonData)
-      localStorage.setItem('testCOPDQ', jsonData)
+      let urlS = 'http://localhost:8080/genf/src/statics/testCopdQu'
+      // let urlS = 'http://localhost:8080/Users/engs1923/Documents/GitHub/OX/3qu/genf/src/statics/testCopdQu'
+      // let urlS = '/Users/engs1923/Documents/GitHub/OX/3qu/genf/src/statics/testCopdQu'
+      // let urlS = 'http://localhost:8080/src/statics/testCopdQu'
+      // const jsonData = JSON.stringify(this.forms[this.currFIndex])
+      // console.log('jSON Data is: ', jsonData)
+      // localStorage.setItem('testCOPDQ', jsonData)
+      let txt = 'something something 2'
+      axios.post(urlS, txt).then((response) => {
+        console.log(response)
+      }, error => {
+        console.error(error)
+      })
     },
     // This function is called from the generated form and loads a JSON into forms[0] for testing. User still has to maually click submit in browser.
     testLoadJSON () {
