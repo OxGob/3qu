@@ -547,9 +547,8 @@ export default {
     checkNextDefId () {
       // Algo
       // 1. use defId from questions.defaultId. Cycle through questions []
-      // 2. For each question, get the def id
-      // 3. check this against the tracking q id
-      // 4. If the next def id doesn't exist, then in error array, add the index of the question
+      // 2. For each question, get the def id. Check this against the tracking q id. Also check for infinite loop.
+      // 3. If the next def id doesn't exist, then in error array, add the index of the question
       var fIndex = this.currFIndex
       // var qIndex = this.currQIndex
       var quArr = this.forms[fIndex].questions
@@ -562,13 +561,18 @@ export default {
       var i, j, k
       // check in arr of q
       for (i = 0; i < lenQ; i++) {
-        // Check Next Default Id for each Q
         var fieldDefQId = quArr[i].nextDefaultId.toUpperCase().replace(/ /g, '')
         if (fieldDefQId !== '') {
-          for (j = 0; j < lenA; j++) {
-            var nameQId = arrTk[j].quesID.toUpperCase().replace(/ /g, '')
-            if (fieldDefQId !== nameQId) {
-              errNq.push(i)
+          // Check for infinite loop (Next Q Id = Current Q Id)
+          if (fieldDefQId === quArr[i].qId) {
+            errNq.push(i)
+          } else {
+            // Check Next Default Id for each Q against  Q tracking
+            for (j = 0; j < lenA; j++) {
+              var nameQId = arrTk[j].quesID.toUpperCase().replace(/ /g, '')
+              if (fieldDefQId !== nameQId) {
+                errNq.push(i)
+              }
             }
           }
         }
@@ -578,10 +582,16 @@ export default {
         for (k = 0; k < lenAn; k++) {
           var fieldNxtId = ansChArr[k].nextQuId.toUpperCase().replace(/ /g, '')
           if (fieldNxtId !== '') {
-            for (j = 0; j < lenA; j++) {
-              var nameQId2 = arrTk[j].quesID.toUpperCase().replace(/ /g, '')
-              if (fieldNxtId !== nameQId2) {
-                errAnChNx.push({quId: i, indexOfAnsCh: k})
+            // Check for infinite loop (Next Q Id = Current Q Id)
+            if (fieldNxtId === quArr[i].qId) {
+              errNq.push(i)
+            } else {
+              // Check Next Question Id vs QTracking
+              for (j = 0; j < lenA; j++) {
+                var nameQId2 = arrTk[j].quesID.toUpperCase().replace(/ /g, '')
+                if (fieldNxtId !== nameQId2) {
+                  errAnChNx.push({quId: i, indexOfAnsCh: k})
+                }
               }
             }
           }
@@ -595,7 +605,7 @@ export default {
       console.log('Error errAnChNext index: ', errAnChNx)
       console.log('errAnsChlabel has ', errAnChLab)
     },
-    // This function checks if the question id is empty or a duplicate. Flags false. Called by generateForm()
+    // This function checks if the question id is empty or a duplicate. Flags false. Called by genFormTapped()
     checkGenQ: function () {
       // ALGO --> If either next QuesId does not exist or is duplicate, return false
       var arrTk = this.forms[this.currFIndex].qTrackingID
@@ -619,7 +629,6 @@ export default {
           }
         }
       }
-      // console.log('After Push B4, errC is: ', errA)
       errA = [...new Set(errA)]
       // If there is any duplicate or empty QU ID field (i.e. length of error array is not 0), return false. To add for missing next QU ID yet
       if (errA.length > 0) {
@@ -628,7 +637,7 @@ export default {
         return true
       }
     },
-    // This function checks if the answer choice label is empty or unique. Returns an error array.
+    // This function checks if the answer choice label is empty or unique. Returns an error array. Called by checkNextDefId()
     checkAnsCh: function (i, ansChArr, lenAn, errAnsChLab) {
       // ALGO --> If either duplicate Ans Label or next QId does not exist, return error array with empty and duplicates Answer Label
       var j, k
