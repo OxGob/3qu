@@ -511,7 +511,7 @@ export default {
         timeStamp: this.timeStamp1(new Date(), 'en-gb')
       })
     },
-    // Misc methods
+    // Check Methods
     // This function checks the next Qu Id to either end or proceed. Called by searchNextQuestion().
     checkNextQId (qIdCheck) {
       // if there is a keyword, call finish. Otherwise proceed to get next question id
@@ -522,37 +522,33 @@ export default {
         this.getQuIdIndex(qIdCheck)
       }
     },
-    refreshPage () {
-      location.reload(true)
-    },
-    // This function resets some variables and clears the answers array.
-    reset () {
-      var fIn = this.currFIndex
-      this.currFIndex = 0
-      this.currQIndex = 0
-      this.currAIndex = 0
-      this.forms[fIn].answers = []
-      this.forms[fIn].answers.push({
-        questionId: '',
-        answerText: '',
-        answerId: '',
-        timeStamp: ''
-      })
-      this.forms[fIn].counterAnswers = 0
-    },
-    timeStamp1 (date, locale) {
-      const event = (date === undefined) ? new Date() : new Date(date)
-      return event.toLocaleDateString(locale) + ' ' + event.toLocaleTimeString(locale)
-    },
     // Validation Methods - Fields
-    // NB: Check whether need to keep this functin for future use. think this was meant to be used for error msg if field was empty
-    checkFieldQuId (fIndex, qIndex) {
-      var fieldQId = this.forms[fIndex].questions[qIndex].qId
-      if (fieldQId !== '') {
-        this.updtQTrk(fIndex, qIndex)
-      } else {
-        // fire error via either notify or display v-show
+    // This function checks if the question id is empty or a duplicate. Flags false. Called by genFormTapped()
+    checkGenQ: function () {
+      // ALGO --> If either next QuesId does not exist or is duplicate, return false
+      var arrTk = this.forms[this.currFIndex].qTrackingID
+      var i, j
+      var lenA = arrTk.length
+      var errQu = [] // // Stores index of question for empty or duplicate Ans Cho labels
+      for (i = 0; i < lenA; i++) {
+        var name = arrTk[i].quesID.toUpperCase().replace(/ /g, '')
+        // 1. Check if QuId is empty first . Check each ques Id against the rest of the tracking array
+        // If Empty insert into errorArray, skip to next question id in index. If no issue, then go to 2
+        if (name === '') {
+          errQu.push({index: arrTk[i].quesIndex})
+        } else {
+          // 2. Check if QuId is unique.If Not Unique insert into errorArray.
+          // 3. Check if next QID  exists
+          for (j = i + 1; j < lenA; j++) {
+            var name2 = arrTk[j].quesID.toUpperCase().replace(/ /g, '')
+            if ((name2 !== '') && (name === name2)) {
+              errQu.push({index: arrTk[j].quesIndex})
+            }
+          }
+        }
       }
+      errQu = Array.from(new Set(errQu.map(JSON.stringify))).map(JSON.parse)
+      return errQu
     },
     // This function checks if the next def Q ID exists for Questions and Answer Choices
     checkNextDefId: function () {
@@ -612,34 +608,6 @@ export default {
       errAnChNx = Array.from(new Set(errAnChNx.map(JSON.stringify))).map(JSON.parse)
       return [errNxtQu, errAnChNx, errAnChLab]
     },
-    // This function checks if the question id is empty or a duplicate. Flags false. Called by genFormTapped()
-    checkGenQ: function () {
-      // ALGO --> If either next QuesId does not exist or is duplicate, return false
-      var arrTk = this.forms[this.currFIndex].qTrackingID
-      var i, j
-      var lenA = arrTk.length
-      var errQu = [] // // Stores index of question for empty or duplicate Ans Cho labels
-      for (i = 0; i < lenA; i++) {
-        var name = arrTk[i].quesID.toUpperCase().replace(/ /g, '')
-        // 1. Check if QuId is empty first . Check each ques Id against the rest of the tracking array
-        // If Empty insert into errorArray, skip to next question id in index. If no issue, then go to 2
-        if (name === '') {
-          errQu.push({index: arrTk[i].quesIndex})
-        } else {
-          // 2. Check if QuId is unique.If Not Unique insert into errorArray.
-          // 3. Check if next QID  exists
-          for (j = i + 1; j < lenA; j++) {
-            var name2 = arrTk[j].quesID.toUpperCase().replace(/ /g, '')
-            if ((name2 !== '') && (name === name2)) {
-              errQu.push({index: arrTk[j].quesIndex})
-            }
-          }
-        }
-      }
-      // errQu = [...new Set(errQu)]
-      errQu = Array.from(new Set(errQu.map(JSON.stringify))).map(JSON.parse)
-      return errQu
-    },
     // This function checks if the answer choice label is empty or unique. Returns an error array. Called by checkNextDefId()
     checkAnsCh: function (i, ansChArr, lenAn, errAnsChLab) {
       // ALGO --> If either duplicate Ans Label or next QId does not exist, return error array with empty and duplicates Answer Label
@@ -668,6 +636,29 @@ export default {
         return errAnsChLab
       }
     },
+    // Misc methods
+    refreshPage () {
+      location.reload(true)
+    },
+    // This function resets some variables and clears the answers array.
+    reset () {
+      var fIn = this.currFIndex
+      this.currFIndex = 0
+      this.currQIndex = 0
+      this.currAIndex = 0
+      this.forms[fIn].answers = []
+      this.forms[fIn].answers.push({
+        questionId: '',
+        answerText: '',
+        answerId: '',
+        timeStamp: ''
+      })
+      this.forms[fIn].counterAnswers = 0
+    },
+    timeStamp1 (date, locale) {
+      const event = (date === undefined) ? new Date() : new Date(date)
+      return event.toLocaleDateString(locale) + ' ' + event.toLocaleTimeString(locale)
+    },
     // TESTING METHODS
     // This function is called from the design form and saves a newly created JSON into a local file for testing.
     saveForm () {
@@ -684,6 +675,15 @@ export default {
     // Radio selected only for TESTING. TO BE MADE REDUNDANT
     radioSelected () {
       this.$q.notify('The value from radio is: ' + this.forms[this.currFIndex].ansRadioVal)
+    },
+    // NB: Check whether need to keep this functin for future use. think this was meant to be used for error msg if field was empty
+    checkFieldQuId (fIndex, qIndex) {
+      var fieldQId = this.forms[fIndex].questions[qIndex].qId
+      if (fieldQId !== '') {
+        this.updtQTrk(fIndex, qIndex)
+      } else {
+        // fire error via either notify or display v-show
+      }
     }
   }
 }
