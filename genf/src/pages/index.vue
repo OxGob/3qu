@@ -558,6 +558,7 @@ export default {
       var lenA = arrTk.length
       var errNq = []
       var errAnChNx = []
+      var errAnChLab = []
       var i, j, k
       // check in arr of q
       for (i = 0; i < lenQ; i++) {
@@ -584,12 +585,15 @@ export default {
               }
             }
           }
+          // For every answer Choice, check if the answer label is empty is empty or a duplicate
+          errAnChLab = this.checkAnsCh(i, ansChArr, lenAn, errAnChLab)
         }
       }
-      errNq = [...new Set(errNq)]
-      console.log('Error NdefQ index: ', errNq)
-      errAnChNx = [...new Set(errAnChNx)]
-      console.log('Error errAnChNx index: ', errAnChNx)
+      errNq = Array.from(new Set(errNq.map(JSON.stringify))).map(JSON.parse)
+      console.log('Error NextdefQ index: ', errNq)
+      errAnChNx = Array.from(new Set(errAnChNx.map(JSON.stringify))).map(JSON.parse)
+      console.log('Error errAnChNext index: ', errAnChNx)
+      console.log('errAnsChlabel has ', errAnChLab)
     },
     // This function checks if the question id is empty or a duplicate. Flags false. Called by generateForm()
     checkGenQ: function () {
@@ -624,41 +628,34 @@ export default {
         return true
       }
     },
-    // This function checks if the answer choice label is empty or unique.
-    checkAnsCh () {
-      // ALGO --> If either duplicate Ans Label or next QId does not exist, return false
-      var fIndex = this.currFIndex
-      var quArr = this.forms[fIndex].questions
-      var i, j, k
-      var lenQ = quArr.length
-      var errAnsChlab = []
-      // var errLabAnCh = [] // Combines empty and duplicates Answer Label
-      // For each Question
-      for (i = 0; i < lenQ; i++) {
-        var ansChArr = quArr[i].answerChoices
-        var lenAn = ansChArr.length
-        // For each Answer Choice
-        for (j = 0; j < lenAn; j++) {
-          var labelAns = ansChArr[j].answerId.toUpperCase().replace(/ /g, '')
-          if (labelAns === '') {
-            errAnsChlab.push({quId: i, indexOfAnsCh: j})
-            console.log('Empty errAnsChlab ', errAnsChlab)
-          } else {
-            // Comparison with other answer labels to find if answer label is unique
-            for (k = j + 1; k < lenAn; k++) {
-              var compareLabelName = ansChArr[k].answerId.toUpperCase().replace(/ /g, '')
-              if ((compareLabelName !== '') && (compareLabelName === labelAns)) {
-                // Give index of duplicate found
-                errAnsChlab.push({quId: i, indexOfAnsCh: k})
-              }
+    // This function checks if the answer choice label is empty or unique. Returns an error array.
+    checkAnsCh: function (i, ansChArr, lenAn, errAnsChLab) {
+      // ALGO --> If either duplicate Ans Label or next QId does not exist, return error array with empty and duplicates Answer Label
+      var j, k
+      // For each Answer Choice
+      for (j = 0; j < lenAn; j++) {
+        var labelAns = ansChArr[j].answerId.toUpperCase().replace(/ /g, '')
+        if (labelAns === '') {
+          errAnsChLab.push({quId: i, indexOfAnsCh: j})
+          console.log('Empty errAnsChlab ', errAnsChLab)
+        } else {
+          // Comparison with other answer labels to find if answer label is unique
+          for (k = j + 1; k < lenAn; k++) {
+            var compareLabelName = ansChArr[k].answerId.toUpperCase().replace(/ /g, '')
+            if ((compareLabelName !== '') && (compareLabelName === labelAns)) {
+              // Give index of duplicate found
+              errAnsChLab.push({quId: i, indexOfAnsCh: k})
             }
           }
         }
       }
-      // console.log('After Push B4, errC is: ', errA)
-      errAnsChlab = [...new Set(errAnsChlab)]
-      console.log('errAnsChlab has ', errAnsChlab)
-      // If there is any duplicate or empty QU ID field (i.e. length of error array is not 0), return false. To add for missing next QU ID yet
+      errAnsChLab = [...new Set(errAnsChLab)]
+      if (errAnsChLab.length > 0) {
+        errAnsChLab = Array.from(new Set(errAnsChLab.map(JSON.stringify))).map(JSON.parse)
+        return errAnsChLab
+      } else {
+        return errAnsChLab
+      }
     },
     // TESTING METHODS
     // This function is called from the design form and saves a newly created JSON into a local file for testing.
@@ -666,8 +663,8 @@ export default {
       const jsonData = JSON.stringify(this.forms[this.currFIndex])
       console.log('jSON Data is: ', jsonData)
       localStorage.setItem('testCOPDQ', jsonData)
-      // this.checkNextDefId()
-      this.checkAnsCh()
+      this.checkNextDefId()
+      // this.checkAnsCh()
     },
     // This function is called from the generated form and loads a JSON into forms[0] for testing. User still has to maually click submit in browser.
     testLoadJSON () {
