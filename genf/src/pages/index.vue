@@ -543,8 +543,9 @@ export default {
         // fire error via either notify or display v-show
       }
     },
+    // This function checks if the next def Q ID exists for Questions and Answer Choices
     checkNextDefId () {
-      // Algo --> checks if the next def ID exists for Questions and Answer Choices
+      // Algo
       // 1. use defId from questions.defaultId. Cycle through questions []
       // 2. For each question, get the def id
       // 3. check this against the tracking q id
@@ -575,7 +576,6 @@ export default {
         var lenAn = ansChArr.length
         for (k = 0; k < lenAn; k++) {
           var fieldNxtId = ansChArr[k].nextQuId.toUpperCase().replace(/ /g, '')
-          this.$q.notify('the ans choice: ' + fieldNxtId)
           if (fieldNxtId !== '') {
             for (j = 0; j < lenA; j++) {
               var nameQId2 = arrTk[j].quesID.toUpperCase().replace(/ /g, '')
@@ -593,7 +593,7 @@ export default {
     },
     // This function checks if the question id is empty or a duplicate. Flags false. Called by generateForm()
     checkGenQ: function () {
-      // ALGO --> If either duplicate quId or next QId does not exist, return false
+      // ALGO --> If either next QuesId does not exist or is duplicate, return false
       var arrTk = this.forms[this.currFIndex].qTrackingID
       var i, j
       var lenA = arrTk.length
@@ -624,13 +624,50 @@ export default {
         return true
       }
     },
+    // This function checks if the answer choice label is empty or unique.
+    checkAnsCh () {
+      // ALGO --> If either duplicate Ans Label or next QId does not exist, return false
+      var fIndex = this.currFIndex
+      var quArr = this.forms[fIndex].questions
+      var i, j, k
+      var lenQ = quArr.length
+      var errAnsChlab = []
+      // var errLabAnCh = [] // Combines empty and duplicates Answer Label
+      // For each Question
+      for (i = 0; i < lenQ; i++) {
+        var ansChArr = quArr[i].answerChoices
+        var lenAn = ansChArr.length
+        // For each Answer Choice
+        for (j = 0; j < lenAn; j++) {
+          var labelAns = ansChArr[j].answerId.toUpperCase().replace(/ /g, '')
+          if (labelAns === '') {
+            errAnsChlab.push({quId: i, indexOfAnsCh: j})
+            console.log('Empty errAnsChlab ', errAnsChlab)
+          } else {
+            // Comparison with other answer labels to find if answer label is unique
+            for (k = j + 1; k < lenAn; k++) {
+              var compareLabelName = ansChArr[k].answerId.toUpperCase().replace(/ /g, '')
+              if ((compareLabelName !== '') && (compareLabelName === labelAns)) {
+                // Give index of duplicate found
+                errAnsChlab.push({quId: i, indexOfAnsCh: k})
+              }
+            }
+          }
+        }
+      }
+      // console.log('After Push B4, errC is: ', errA)
+      errAnsChlab = [...new Set(errAnsChlab)]
+      console.log('errAnsChlab has ', errAnsChlab)
+      // If there is any duplicate or empty QU ID field (i.e. length of error array is not 0), return false. To add for missing next QU ID yet
+    },
     // TESTING METHODS
     // This function is called from the design form and saves a newly created JSON into a local file for testing.
     saveForm () {
       const jsonData = JSON.stringify(this.forms[this.currFIndex])
       console.log('jSON Data is: ', jsonData)
       localStorage.setItem('testCOPDQ', jsonData)
-      this.checkNextDefId()
+      // this.checkNextDefId()
+      this.checkAnsCh()
     },
     // This function is called from the generated form and loads a JSON into forms[0] for testing. User still has to maually click submit in browser.
     testLoadJSON () {
