@@ -322,8 +322,22 @@ export default {
     // Navigation Methods
     // Function called when generating form. If validation passes, call generateForm ()
     genFormTapped () {
-      // Only true if both Q and A are true
-      if (this.checkGenQ() === true) {
+      // Get following error arrays: [errNxtQu, errAnChNx, errAnChLab], errQu
+      // Get length of error array. Proceed to generate form ONLY IF all error arrays are false (i.e. length of 0)
+      var errQu = this.checkGenQ()
+      var errCheckNextDefId = this.checkNextDefId()
+      var errNxtQu = errCheckNextDefId[0]
+      var errAnChNx = errCheckNextDefId[1]
+      var errAnChLab = errCheckNextDefId[2]
+
+      var lenErrQu = errQu.length
+      var lenErrNxtQu = errNxtQu.length
+      var lenErrAnChNx = errAnChNx.length
+      var lenErrAnChLab = errAnChLab.length
+
+      if ((lenErrQu > 0) || (lenErrNxtQu > 0) || (lenErrAnChNx > 0) || (lenErrAnChLab > 0)) {
+        // send index for error msgs??
+      } else {
         this.generateForm()
       }
     },
@@ -413,14 +427,12 @@ export default {
       var foundAnsCh = ansChSe.find(ans => ans.answerId === val)
       var foundText = foundAnsCh.text
       var foundAnsId = foundAnsCh.answerId
-      console.log('Found Ans Ch is via: ', foundAnsCh)
       if (typeof foundAnsCh !== 'undefined') {
         // Save Answer choice in answers
         this.saveAnswers(foundAnsId, foundText)
         this.searchNextQuestion(quType, foundAnsCh.nextQuId)
         this.forms[this.currFIndex].ansRadioVal = ''
       } else if (typeof foundAnsCh === 'undefined') {
-        // NB: This means the index does not exist. Error Condition. Send an alert to user. ----> 1
         this.$q.notify('There is an error. Please check your radio values. ')
       }
     },
@@ -462,7 +474,6 @@ export default {
       var aObj = this.forms[fIndex].questions[qIndex].answerChoices
       // to get last index, need length of object as we always add to last index
       var lastIndexAObj = Object.keys(aObj).length - 1
-      // this.$q.notify('Final index in  questions: ' + lastIndexQObj)
       this.forms[fIndex].questions[qIndex].ansTrackingID.push({
         ansID: this.forms[fIndex].questions[qIndex].answerChoices[lastIndexAObj].answerId,
         ansIndex: lastIndexAObj
@@ -544,20 +555,18 @@ export default {
       }
     },
     // This function checks if the next def Q ID exists for Questions and Answer Choices
-    checkNextDefId () {
-      // Algo
+    checkNextDefId: function () {
       // 1. use defId from questions.defaultId. Cycle through questions []
       // 2. For each question, get the def id. Check this against the tracking q id. Also check for infinite loop.
       // 3. If the next def id doesn't exist, then in error array, add the index of the question
       var fIndex = this.currFIndex
-      // var qIndex = this.currQIndex
       var quArr = this.forms[fIndex].questions
       var arrTk = this.forms[fIndex].qTrackingID
       var lenQ = quArr.length
       var lenA = arrTk.length
-      var errNq = []
-      var errAnChNx = []
-      var errAnChLab = []
+      var errNxtQu = [] // Stores index of question for non-existent or looping next def id
+      var errAnChNx = [] // Stores index of question and answer choice for non-existent or looping next q id
+      var errAnChLab = [] // Stores index of question and answer choice for empty or duplicate Ans Cho labels
       var i, j, k
       // check in arr of q
       for (i = 0; i < lenQ; i++) {
@@ -565,13 +574,13 @@ export default {
         if (fieldDefQId !== '') {
           // Check for infinite loop (Next Q Id = Current Q Id)
           if (fieldDefQId === quArr[i].qId) {
-            errNq.push(i)
+            errNxtQu.push({index: i})
           } else {
             // Check Next Default Id for each Q against  Q tracking
             for (j = 0; j < lenA; j++) {
               var nameQId = arrTk[j].quesID.toUpperCase().replace(/ /g, '')
               if (fieldDefQId !== nameQId) {
-                errNq.push(i)
+                errNxtQu.push({index: i})
               }
             }
           }
@@ -584,7 +593,7 @@ export default {
           if (fieldNxtId !== '') {
             // Check for infinite loop (Next Q Id = Current Q Id)
             if (fieldNxtId === quArr[i].qId) {
-              errNq.push(i)
+              errNxtQu.push(i)
             } else {
               // Check Next Question Id vs QTracking
               for (j = 0; j < lenA; j++) {
@@ -599,11 +608,9 @@ export default {
           errAnChLab = this.checkAnsCh(i, ansChArr, lenAn, errAnChLab)
         }
       }
-      errNq = Array.from(new Set(errNq.map(JSON.stringify))).map(JSON.parse)
-      console.log('Error NextdefQ index: ', errNq)
+      errNxtQu = Array.from(new Set(errNxtQu.map(JSON.stringify))).map(JSON.parse)
       errAnChNx = Array.from(new Set(errAnChNx.map(JSON.stringify))).map(JSON.parse)
-      console.log('Error errAnChNext index: ', errAnChNx)
-      console.log('errAnsChlabel has ', errAnChLab)
+      return [errNxtQu, errAnChNx, errAnChLab]
     },
     // This function checks if the question id is empty or a duplicate. Flags false. Called by genFormTapped()
     checkGenQ: function () {
@@ -611,31 +618,27 @@ export default {
       var arrTk = this.forms[this.currFIndex].qTrackingID
       var i, j
       var lenA = arrTk.length
-      var errA = [] // Combines empty and duplicates quID
+      var errQu = [] // // Stores index of question for empty or duplicate Ans Cho labels
       for (i = 0; i < lenA; i++) {
         var name = arrTk[i].quesID.toUpperCase().replace(/ /g, '')
         // 1. Check if QuId is empty first . Check each ques Id against the rest of the tracking array
         // If Empty insert into errorArray, skip to next question id in index. If no issue, then go to 2
         if (name === '') {
-          errA.push(arrTk[i].quesIndex)
+          errQu.push({index: arrTk[i].quesIndex})
         } else {
           // 2. Check if QuId is unique.If Not Unique insert into errorArray.
           // 3. Check if next QID  exists
           for (j = i + 1; j < lenA; j++) {
             var name2 = arrTk[j].quesID.toUpperCase().replace(/ /g, '')
             if ((name2 !== '') && (name === name2)) {
-              errA.push(arrTk[j].quesIndex)
+              errQu.push({index: arrTk[j].quesIndex})
             }
           }
         }
       }
-      errA = [...new Set(errA)]
-      // If there is any duplicate or empty QU ID field (i.e. length of error array is not 0), return false. To add for missing next QU ID yet
-      if (errA.length > 0) {
-        return false
-      } else {
-        return true
-      }
+      // errQu = [...new Set(errQu)]
+      errQu = Array.from(new Set(errQu.map(JSON.stringify))).map(JSON.parse)
+      return errQu
     },
     // This function checks if the answer choice label is empty or unique. Returns an error array. Called by checkNextDefId()
     checkAnsCh: function (i, ansChArr, lenAn, errAnsChLab) {
@@ -646,7 +649,6 @@ export default {
         var labelAns = ansChArr[j].answerId.toUpperCase().replace(/ /g, '')
         if (labelAns === '') {
           errAnsChLab.push({quId: i, indexOfAnsCh: j})
-          console.log('Empty errAnsChlab ', errAnsChLab)
         } else {
           // Comparison with other answer labels to find if answer label is unique
           for (k = j + 1; k < lenAn; k++) {
@@ -672,8 +674,6 @@ export default {
       const jsonData = JSON.stringify(this.forms[this.currFIndex])
       console.log('jSON Data is: ', jsonData)
       localStorage.setItem('testCOPDQ', jsonData)
-      this.checkNextDefId()
-      // this.checkAnsCh()
     },
     // This function is called from the generated form and loads a JSON into forms[0] for testing. User still has to maually click submit in browser.
     testLoadJSON () {
