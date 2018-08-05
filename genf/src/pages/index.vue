@@ -197,7 +197,7 @@ export default {
               qHelp: '',
               qId: 'Initial Question',
               nextDefaultId: '',
-              qType: 'freetext',
+              qType: 'single',
               answerChoices: [
                 {
                   answerId: 'Answer 1',
@@ -253,7 +253,7 @@ export default {
         qHelp: '',
         qId: 'Question ' + this.forms[fIndex].counterGenQuID,
         nextDefaultId: '',
-        qType: 'freetext',
+        qType: 'single',
         answerChoices: [
           {
             answerId: 'Answer 1',
@@ -507,7 +507,6 @@ export default {
       if (qIdCheck.toUpperCase() === 'ENDFORM' || qIdCheck === '-1') {
         this.toggleFinishBtn()
       } else if (qIdCheck !== '') {
-        // ?? NB: To add a check here for a valid next question Id. REMOVE WHEN DONE ---> 1
         // If the check returns a valid one call this.getQuIdIndex for next Qu Id (can add e.g remove space in string for comparison)
         this.getQuIdIndex(qIdCheck)
       }
@@ -545,7 +544,7 @@ export default {
       }
     },
     checkNextDefId () {
-      // Algo --> checks if the next def ID exists
+      // Algo --> checks if the next def ID exists for Questions and Answer Choices
       // 1. use defId from questions.defaultId. Cycle through questions []
       // 2. For each question, get the def id
       // 3. check this against the tracking q id
@@ -553,14 +552,16 @@ export default {
       var fIndex = this.currFIndex
       // var qIndex = this.currQIndex
       var quArr = this.forms[fIndex].questions
-      var arrTk = this.forms[this.currFIndex].qTrackingID
+      var arrTk = this.forms[fIndex].qTrackingID
       var lenQ = quArr.length
       var lenA = arrTk.length
       var errNq = []
-      var i, j
+      var errAnChNx = []
+      var i, j, k
       // check in arr of q
       for (i = 0; i < lenQ; i++) {
-        var fieldDefQId = this.forms[fIndex].questions[i].nextDefaultId.toUpperCase().replace(/ /g, '')
+        // Check Next Default Id for each Q
+        var fieldDefQId = quArr[i].nextDefaultId.toUpperCase().replace(/ /g, '')
         if (fieldDefQId !== '') {
           for (j = 0; j < lenA; j++) {
             var nameQId = arrTk[j].quesID.toUpperCase().replace(/ /g, '')
@@ -569,9 +570,26 @@ export default {
             }
           }
         }
+        // Check Next Question Id of Answer Choice for each Question
+        var ansChArr = this.forms[fIndex].questions[i].answerChoices
+        var lenAn = ansChArr.length
+        for (k = 0; k < lenAn; k++) {
+          var fieldNxtId = ansChArr[k].nextQuId.toUpperCase().replace(/ /g, '')
+          this.$q.notify('the ans choice: ' + fieldNxtId)
+          if (fieldNxtId !== '') {
+            for (j = 0; j < lenA; j++) {
+              var nameQId2 = arrTk[j].quesID.toUpperCase().replace(/ /g, '')
+              if (fieldNxtId !== nameQId2) {
+                errAnChNx.push({quId: i, indexOfAnsCh: k})
+              }
+            }
+          }
+        }
       }
       errNq = [...new Set(errNq)]
       console.log('Error NdefQ index: ', errNq)
+      errAnChNx = [...new Set(errAnChNx)]
+      console.log('Error errAnChNx index: ', errAnChNx)
     },
     // This function checks if the question id is empty or a duplicate. Flags false. Called by generateForm()
     checkGenQ: function () {
